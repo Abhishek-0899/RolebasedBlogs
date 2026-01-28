@@ -1,16 +1,42 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import { useRole } from "../hooks/useRole";
+import { Navigate, Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import supabase from "../utils/supabase";
+import { useState } from "react";
 
-const RequireRole = ({ role, children }) => {
-  const { user, loading: authLoading } = useAuth();
-  const { role: userRole, loading: roleLoading } = useRole(user?.id);
+const RequireRole = ({ role: requiredRole, children }) => {
+  const [userRole, setUserRole] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  if (authLoading || roleLoading) return <div>Loading</div>;
-  if (!user || userRole !== role) return <Navigate to="/" />;
+  useEffect(() => {
+    const getRole = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-  return children;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      const { data } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      setUserRole(data?.role || null);
+      setLoading(false);
+    };
+
+    getRole();
+  }, []);
+
+  // ⏳ WAIT — DO NOT REDIRECT YET
+  if (loading) return null; // or loader
+
+
+  // ✅ Allowed
+  return children || <Outlet />;
 };
 
 export default RequireRole;

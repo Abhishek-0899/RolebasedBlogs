@@ -1,11 +1,10 @@
-import React from 'react';
+import React from "react";
+import Navbar from "../../components/navbar";
 
 const EditorDashboard = () => {
-  return (
-    <div>ediot dashboard
-      
-    </div>
-  );
-}
+  return <div className="">
+    <Navbar/>
+  </div>;
+};
 
 export default EditorDashboard;

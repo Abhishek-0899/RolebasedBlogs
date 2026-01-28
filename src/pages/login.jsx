@@ -11,7 +11,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -21,7 +21,28 @@ const Login = () => {
       return;
     }
 
-    navigate("/");
+    const userId = data.user?.id;
+    if (!userId) return;
+
+    // ✅ Fetch role from profiles table
+
+    const { data: profileData, error: profileError } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .single();
+    if (profileError) {
+      alert("Failed to get user role: " + profileError.message);
+      return;
+    }
+
+    const role = profileData?.role || "reader";
+
+    const roleRoute = {
+      author: "/author/dashboard",
+      editor: "/editor/dashboard",
+    };
+    navigate(roleRoute[role] || "/");
   };
   return (
     <div className="w-full min-h-screen flex items-center justify-center bg-blue-200 overflow-hidden">

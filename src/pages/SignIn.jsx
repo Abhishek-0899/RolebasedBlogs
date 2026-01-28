@@ -22,21 +22,21 @@ const SignIn = () => {
     // ✅ STEP 1: Create user
     const { data, error: authError } = await supabase.auth.signUp({
       email,
+      name,
       password,
     });
-
-    // ✅ STEP 2: Edge cases
 
     if (authError) {
       alert(authError.message);
       setloading(false);
       return;
     }
-  
+
     const userId = data.user?.id;
 
     console.log("🔥 START INSERT:", { userId, name, role: role.toLowerCase() });
 
+    // ✅ STEP 2: Insert into profiles
     const { error: profileError } = await supabase
       .from("profiles")
       .insert({
@@ -44,9 +44,6 @@ const SignIn = () => {
         role: role.toLowerCase(),
       })
       .select();
-
-    
-    // console.log("📊 INSERT RESULT:", { profileData, profileError }); // 🔥 CRITICAL
 
     if (profileError) {
       console.error("💥 FULL ERROR:", profileError);
@@ -57,13 +54,21 @@ const SignIn = () => {
 
     console.log("✅ SUCCESS - Check table!");
     alert("Profile created! Check Supabase table.");
-    const roleRoute = {
-      reader : "/",
-      editor: "/editor/dashboard",
-      author : "/author/dashboard"
-    }
 
-    navigate(roleRoute[role] || "/")
+    // ✅ STEP 3: Role-based navigation
+    const roleRoute = {
+      reader: "/",
+      editor: "/editor/dashboard",
+      author: "/author/dashboard",
+    };
+
+    // Debug logs
+    console.log("Selected role (state):", role);
+    console.log("Role lowercase:", role?.toLowerCase());
+    console.log("Navigating to:", roleRoute[role?.toLowerCase()] || "/");
+
+    // Navigate to role dashboard
+    navigate(roleRoute[role?.toLowerCase()] || "/");
   };
 
   return (
@@ -90,9 +95,10 @@ const SignIn = () => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Jonn doe"
+              placeholder="John Doe"
             />
           </div>
+
           <div className="text-left">
             <label className="block text-gray-600 text-sm mb-1">Email</label>
             <input
@@ -103,6 +109,7 @@ const SignIn = () => {
               placeholder="xyz@gmail.com"
             />
           </div>
+
           <div className="text-left">
             <label className="block text-gray-600 text-sm mb-1">Password</label>
             <input
@@ -113,16 +120,16 @@ const SignIn = () => {
               placeholder="••••••••"
             />
           </div>
-          {/* role based buttons */}
+
+          {/* Role select */}
           <select
-            className="w-full px-4 py-2 border rounded-lg bg-white
-             focus:outline-none focus:ring-2"
+            className="w-full px-4 py-2 border rounded-lg bg-white focus:outline-none focus:ring-2"
             value={role}
             onChange={(e) => setRole(e.target.value)}
           >
             {roles.map((item) => (
               <option
-                className=" text-blue-900 rounded-lg w-full font-extrabold"
+                className="text-blue-900 rounded-lg w-full font-extrabold"
                 key={item}
                 value={item}
               >
@@ -135,19 +142,16 @@ const SignIn = () => {
             type="submit"
             disabled={loading}
             onClick={handleSignUp}
-            className="bg-blue-600 w-full text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition hover:scale-105 active:scale-95
-            duration-200 ease-in-out"
+            className="bg-blue-600 w-full text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition hover:scale-105 active:scale-95 duration-200 ease-in-out"
           >
             {loading ? "Create an Account...." : "Create an Account"}
           </button>
 
           <p className="text-sm">
-            Don&apos;t have an account?{" "}
+            Already have an account?{" "}
             <button
               onClick={() => navigate("/login")}
-              className="text-blue-500 cursor-pointer hover:underline hover:scale-105 active:scale-95
-              transition
-            duration-200 ease-in-out"
+              className="text-blue-500 cursor-pointer hover:underline hover:scale-105 active:scale-95 transition duration-200 ease-in-out"
             >
               Login
             </button>

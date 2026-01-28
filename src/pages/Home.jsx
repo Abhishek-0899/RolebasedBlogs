@@ -5,6 +5,8 @@ import { Outlet } from 'react-router-dom';
 const Home = () => {
   return (
    <Navbar/>
+
+  // <h1>Welcome to blog Post</h1>
   );
 }
 

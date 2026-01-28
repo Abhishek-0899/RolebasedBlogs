@@ -1,11 +1,14 @@
-import React from 'react';
+import { Outlet } from "react-router-dom";
 
 const Editorlayout = () => {
   return (
-    <div>
-      hello editor
+    <div className="">
+      <main className="">
+        
+        <Outlet />
+      </main>
     </div>
   );
-}
+};
 
 export default Editorlayout;

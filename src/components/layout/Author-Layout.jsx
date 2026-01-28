@@ -1,11 +1,13 @@
-import React from 'react';
+import { Outlet } from "react-router-dom";
 
 const Authorlayout = () => {
   return (
-    <div>
-      hello world
+    <div className="">
+      <main className="">
+        <Outlet />
+      </main>
     </div>
   );
-}
+};
 
 export default Authorlayout;
