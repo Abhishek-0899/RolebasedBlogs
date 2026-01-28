@@ -5,52 +5,79 @@ import supabase from "../utils/supabase";
 import { useNavigate } from "react-router-dom";
 import { useRole } from "../hooks/useRole";
 
+// Define navigation items for each role
+const NAV_ITEMS = {
+  reader: [
+    { label: "Home", path: "/" },
+    { label: "Posts", path: "/posts" },
+  ],
+  editor: [
+    { label: "Dashboard", path: "/editor/dashboard" },
+    { label: "Posts", path: "/editor/posts" },
+  ],
+  author: [
+    { label: "Dashboard", path: "/author/dashboard" },
+    { label: "Review", path: "/author/review" },
+  ],
+};
+
 const Navbar = () => {
   const navigate = useNavigate();
-
   const [userId, setUserId] = useState(null);
 
-  // get logged In
-
+  // Get logged-in user
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       setUserId(data?.user?.id || null);
     });
   }, []);
 
+  // Get role of the user
   const { role, loading } = useRole(userId);
+
+  // Logout function
   const handleLogout = async () => {
-    let { error } = await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
     if (error) {
       alert(error.message);
+    } else {
+      navigate("/login");
     }
-    navigate("/login");
   };
+
   return (
-    <div className="flex justify-between items-center p-2 w-full bg-gray-200 sticky">
-      <div className="flex ml-5">
-        <img className="w-10 h-10" src={img1} alt="" />
-        <h1>BlobHib</h1>
-      </div>
-      <div className="flex gap-10">
-        <h1 className=" rounded-xl px-1.5 py-2 hover:bg-blue-200">dashboasr</h1>
-        <h1 className=" rounded-xl px-1.5 py-2 hover:bg-blue-200">Post</h1>
+    <div className="flex justify-between items-center p-2 w-full bg-gray-200 sticky top-0 z-50">
+      {/* Logo */}
+      <div className="flex ml-5 items-center gap-2">
+        <img className="w-10 h-10" src={img1} alt="Logo" />
+        <h1 className="font-bold text-lg">BlobHib</h1>
       </div>
 
-      <div className="flex gap-10 mr-4">
-        <h1 className="  rounded-xl px-1.5 py-2 hover:bg-blue-200">
-          {" "}
+      {/* Navigation Items */}
+      <div className="flex gap-6">
+        {!loading &&
+          NAV_ITEMS[role || "reader"].map((item) => (
+            <button
+              key={item.path}
+              onClick={() => navigate(item.path)}
+              className="rounded-xl px-3 py-2 hover:bg-blue-200 transition"
+            >
+              {item.label}
+            </button>
+          ))}
+      </div>
+
+      {/* Role and Logout */}
+      <div className="flex gap-4 mr-4 items-center">
+        <span className="rounded-xl px-2 py-1 bg-gray-300">
           {loading ? "..." : role?.toUpperCase()}
-        </h1>
+        </span>
 
         <button
-          className=" rounded-xl px-1.5 py-2 flex gap-3 hover:bg-blue-400"
+          className="rounded-xl px-2 py-1 flex gap-2 items-center hover:bg-blue-400"
           onClick={handleLogout}
         >
-          <span>
-            {" "}
-            <GoSignOut size={22} className="text-blue-700 text-center" />
-          </span>
+          <GoSignOut size={20} className="text-blue-700" />
           Sign Out
         </button>
       </div>
