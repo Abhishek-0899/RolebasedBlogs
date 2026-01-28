@@ -1,10 +1,24 @@
 import { GoSignOut } from "react-icons/go";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import img1 from "../assets/blog.png";
 import supabase from "../utils/supabase";
 import { useNavigate } from "react-router-dom";
+import { useRole } from "../hooks/useRole";
+
 const Navbar = () => {
   const navigate = useNavigate();
+
+  const [userId, setUserId] = useState(null);
+
+  // get logged In
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUserId(data?.user?.id || null);
+    });
+  }, []);
+
+  const { role, loading } = useRole(userId);
   const handleLogout = async () => {
     let { error } = await supabase.auth.signOut();
     if (error) {
@@ -24,7 +38,10 @@ const Navbar = () => {
       </div>
 
       <div className="flex gap-10 mr-4">
-        <h1 className="  rounded-xl px-1.5 py-2 hover:bg-blue-200">Reader</h1>
+        <h1 className="  rounded-xl px-1.5 py-2 hover:bg-blue-200">
+          {" "}
+          {loading ? "..." : role?.toUpperCase()}
+        </h1>
 
         <button
           className=" rounded-xl px-1.5 py-2 flex gap-3 hover:bg-blue-400"

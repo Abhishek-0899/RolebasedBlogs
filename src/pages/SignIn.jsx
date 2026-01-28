@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import img1 from "../assets/blog.png";
 import "../index.css";
 import { useNavigate } from "react-router-dom";
@@ -9,11 +9,9 @@ const SignIn = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setloading] = useState(false);
-  const [options, setoption] = useState("Reader");
+  const [role, setRole] = useState("reader");
 
-  const roles = ["Reader", "Author", "Editor"];
-  const [open, setOpen] = useState(false);
-
+  const roles = ["reader", "author", "editor"];
 
   const navigate = useNavigate();
 
@@ -21,17 +19,51 @@ const SignIn = () => {
     e.preventDefault();
     setloading(true);
 
-    const { error } = await supabase.auth.signUp({
+    // ✅ STEP 1: Create user
+    const { data, error: authError } = await supabase.auth.signUp({
       email,
-      name,
       password,
     });
-    setloading(false);
-    if (error) {
-      alert(error.message);
+
+    // ✅ STEP 2: Edge cases
+
+    if (authError) {
+      alert(authError.message);
+      setloading(false);
       return;
     }
-    navigate("/");
+  
+    const userId = data.user?.id;
+
+    console.log("🔥 START INSERT:", { userId, name, role: role.toLowerCase() });
+
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .insert({
+        id: userId,
+        role: role.toLowerCase(),
+      })
+      .select();
+
+    
+    // console.log("📊 INSERT RESULT:", { profileData, profileError }); // 🔥 CRITICAL
+
+    if (profileError) {
+      console.error("💥 FULL ERROR:", profileError);
+      alert("Profile failed: " + profileError.message);
+      setloading(false);
+      return;
+    }
+
+    console.log("✅ SUCCESS - Check table!");
+    alert("Profile created! Check Supabase table.");
+    const roleRoute = {
+      reader : "/",
+      editor: "/editor/dashboard",
+      author : "/author/dashboard"
+    }
+
+    navigate(roleRoute[role] || "/")
   };
 
   return (
@@ -85,8 +117,8 @@ const SignIn = () => {
           <select
             className="w-full px-4 py-2 border rounded-lg bg-white
              focus:outline-none focus:ring-2"
-            value={options}
-            onChange={(e) => setoption(e.target.value)}
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
           >
             {roles.map((item) => (
               <option
