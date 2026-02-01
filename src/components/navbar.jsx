@@ -8,8 +8,7 @@ import { useRole } from "../hooks/useRole";
 // Define navigation items for each role
 const NAV_ITEMS = {
   reader: [
-    { label: "Home", path: "/" },
-    { label: "Posts", path: "/posts" },
+    { label: "Dashboard", path: "/" },
   ],
   editor: [
     { label: "Dashboard", path: "/editor/dashboard" },
