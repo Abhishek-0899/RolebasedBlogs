@@ -14,10 +14,12 @@ const NAV_ITEMS = {
   editor: [
     { label: "Dashboard", path: "/editor/dashboard" },
     { label: "Posts", path: "/editor/posts" },
+    { label: "New Posts", path: "/editor/newPost" },
   ],
   author: [
     { label: "Dashboard", path: "/author/dashboard" },
     { label: "Review", path: "/author/review" },
+    { label: "New Posts", path: "/editor/newPost" },
   ],
 };
 
@@ -60,7 +62,7 @@ const Navbar = () => {
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className="rounded-xl px-3 py-2 hover:bg-blue-200 transition"
+              className="rounded-xl px-3 py-2 hover:bg-blue-600 transition"
             >
               {item.label}
             </button>
@@ -74,10 +76,10 @@ const Navbar = () => {
         </span>
 
         <button
-          className="rounded-xl px-2 py-1 flex gap-2 items-center hover:bg-blue-400"
+          className="rounded-xl px-2 py-1 flex gap-2 items-center hover:bg-red-500"
           onClick={handleLogout}
         >
-          <GoSignOut size={20} className="text-blue-700" />
+          <GoSignOut size={20} className="text-red-700" />
           Sign Out
         </button>
       </div>

@@ -9,6 +9,7 @@ import Authorlayout from "../components/layout/Author-Layout";
 import Editorlayout from "../components/layout/Editor-Layout";
 import AuthorDashboard from "../pages/Author/dashboard";
 import EditorDashboard from "../pages/Editor/dashboard";
+import CreatePost from "../pages/Editor/createPost";
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
@@ -42,7 +43,7 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "dashboard", element: <EditorDashboard /> },
-      // { path: "/cretePost", element: <cretePost /> },
+      { path: "newPost", element: <CreatePost /> },
     ],
   },
 ]);
