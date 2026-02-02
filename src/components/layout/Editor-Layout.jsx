@@ -5,6 +5,7 @@ const Editorlayout = () => {
   return (
     <div className="">
       <main className="">
+        <Navbar/>
         <Outlet />
       </main>
     </div>

@@ -18,7 +18,7 @@ const NAV_ITEMS = {
   author: [
     { label: "Dashboard", path: "/author/dashboard" },
     { label: "Posts", path: "/author/review" },
-    { label: "New Posts", path: "/editor/newPost" },
+    { label: "new-posts", path: "/author/new-posts" },
   ],
 };
 
@@ -50,8 +50,8 @@ const Navbar = () => {
     <div className="flex justify-between items-center p-2 w-full bg-gray-200 sticky top-0 z-50">
       {/* Logo */}
       <div className="flex ml-5 items-center gap-2">
-        <img className="w-10 h-10" src={img1} alt="Logo" />
-        <h1 className="font-bold text-lg">BlobHib</h1>
+        <img className="w-10 h-10" src={img1} alt="Logo" onClick={()=>navigate("/")}/>
+        <h1 onClick={()=>navigate("/")} className="font-bold text-lg">BlobHib</h1>
       </div>
 
       {/* Navigation Items */}

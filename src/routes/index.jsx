@@ -11,6 +11,7 @@ import AuthorDashboard from "../pages/Author/dashboard";
 import EditorDashboard from "../pages/Editor/dashboard";
 import CreatePost from "../pages/Editor/createPost";
 import PostID from "../pages/PostIDs";
+import NewPosts from "../pages/Author/newPosts";
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "dashboard", element: <AuthorDashboard /> },
+      { path: "new-posts", element: <NewPosts /> },
       // { path: "/maganePost", element: <ManagePost /> },
     ],
   },

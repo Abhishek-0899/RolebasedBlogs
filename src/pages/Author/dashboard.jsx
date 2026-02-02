@@ -10,7 +10,7 @@ const AuthorDashboard = () => {
   const stats = getDashboardStats({ role: "author", data: statsData });
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <div className="flex justify-center items-center ">
         <div className="w-full max-w-6xl p-10">
