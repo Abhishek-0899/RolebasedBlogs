@@ -17,7 +17,7 @@ const NAV_ITEMS = {
   ],
   author: [
     { label: "Dashboard", path: "/author/dashboard" },
-    { label: "Review", path: "/author/review" },
+    { label: "Posts", path: "/author/review" },
     { label: "New Posts", path: "/editor/newPost" },
   ],
 };

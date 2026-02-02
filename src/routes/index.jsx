@@ -10,13 +10,13 @@ import Editorlayout from "../components/layout/Editor-Layout";
 import AuthorDashboard from "../pages/Author/dashboard";
 import EditorDashboard from "../pages/Editor/dashboard";
 import CreatePost from "../pages/Editor/createPost";
-import Post from "../pages/Post";
+import PostID from "../pages/PostIDs";
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
     children: [
       { path: "/", element: <Home /> },
-     { path: "/posts/:id", element: <Post /> },
+     { path: "/posts/:id", element: <PostID /> },
       {
         path: "/login",
         element: <Login />,
