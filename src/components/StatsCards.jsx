@@ -6,7 +6,7 @@ const StatsCards = ({ title, count, icon: Icon }) => {
 
     <div 
       className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md
-    transition flex flex-col justify-between w-72 h-24 
+    transition flex flex-col justify-between w-80 h-24 
      border border-gray-200 mt-4
     "
     >

@@ -20,7 +20,7 @@ const Home = () => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       <div className="p-10">
         <div>
           <Header />
