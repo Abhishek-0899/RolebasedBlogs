@@ -3,56 +3,89 @@ import { getDashboardStats } from "../../utils/getDashboardStats";
 import editImage from "../../assets/edit.png";
 import deleteImage from "../../assets/delete.png";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { deletePost } from "../../features/posts/postSlice";
+
 const AuthorDashboard = () => {
   const navigate = useNavigate();
-  const dateTime = new Date().toLocaleDateString("en-US");
-  const statsData = {
-    drafts: 0,
-    review: 0,
-    published: 0,
-  };
-  const stats = getDashboardStats({ role: "author", data: statsData });
+  const dispatch = useDispatch();
+
+  /* ===== READ FROM REDUX ===== */
+  const posts = useSelector((state) => state.posts.posts);
+  const statsData = useSelector((state) => state.posts.stats);
+
+  /* ===== CURRENT AUTHOR ===== */
+  const currentAuthorId = 1;
+
+  /* ===== FILTER POSTS ===== */
+  const authorPosts = posts.filter(
+    (post) => post.authorId === currentAuthorId
+  );
+
+  /* ===== STATS ===== */
+  const stats = getDashboardStats({
+    role: "author",
+    data: statsData,
+  });
+
   return (
-    <>
-      {/* <Navbar /> */}
+    <div className="flex justify-center">
+      <div className="w-full max-w-6xl p-10 mt-10">
+        <h1 className="text-4xl font-extrabold">Author Dashboard</h1>
+        <p className="text-gray-500 mt-2">
+          Manage your blog posts and track performance
+        </p>
 
-      <div className="flex justify-center items-center ">
-        <div className="w-full max-w-6xl p-10 mt-10">
-          <h1 className="text-4xl font-extrabold">Author DashBoard</h1>
-          <p className="text-gray-500 mt-2">
-            Manage your blog posts and track performance
-          </p>
-          <Statsgrid stats={stats} />
+        <Statsgrid stats={stats} />
 
-          {/* displayed data */}
-          <div className=" mt-3 ">
-            <h2>Your Posts</h2>
-            <div className="bg-gray-200 w-full flex flex-col p-5">
-              <hr className="bg-white" />
+        <div className="mt-6">
+          <h2 className="text-2xl font-semibold mb-3">Your Posts</h2>
+
+          {authorPosts.length === 0 && (
+            <p className="text-gray-500">No posts yet.</p>
+          )}
+
+          {authorPosts.map((post) => (
+            <div
+              key={post.id}
+              className="bg-gray-200 rounded-lg p-5 mb-4"
+            >
               <div className="flex justify-between items-center">
-                <div className="flex gap-3 items-center ">
-                  <h1 className="text-xl">ddf</h1>
-                  <p className="rounded-lg bg-gray-300 p-1">draft</p>
+                <div className="flex gap-3 items-center">
+                  <h3 className="text-xl font-semibold">{post.title}</h3>
+                  <span className={` px-2 py-1 rounded-lg capitalize ${post.status === "pending" ? "bg-yellow-400" : "bg-gray-300"}`}>
+                    {post.status}
+                  </span>
                 </div>
-                <div className="flex gap-3 ">
+
+                <div className="flex gap-3">
                   <button
-                    className="hover:bg-gray-300 p-1 rounded-lg "
-                    onClick={() => navigate("/author/new-posts")}
+                    onClick={() =>
+                      navigate(`/author/new-posts/${post.id}`)
+                    }
+                    className="hover:bg-gray-300 p-1 rounded-lg"
                   >
-                    <img className="w-6 h-6" src={editImage} alt="Logo" />
+                    <img src={editImage} className="w-6 h-6" />
                   </button>
-                  <button className="hover:bg-gray-300 p-1 rounded-lg">
-                    <img className="w-6 h-6" src={deleteImage} alt="Logo" />
+
+                  <button
+                    onClick={() => dispatch(deletePost(post.id))}
+                    className="hover:bg-gray-300 p-1 rounded-lg"
+                  >
+                    <img src={deleteImage} className="w-6 h-6" />
                   </button>
                 </div>
               </div>
-              <p className="mt-1">Excpert</p>
-              <p className="mt-3">{dateTime}</p>
+
+              <p className="mt-2">{post.excerpt}</p>
+              <p className="mt-2 text-sm text-gray-500">
+                {new Date(post.date).toLocaleDateString()}
+              </p>
             </div>
-          </div>
+          ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

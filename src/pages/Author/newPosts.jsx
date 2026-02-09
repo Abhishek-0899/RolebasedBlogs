@@ -1,14 +1,16 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import { BiLeftArrowAlt } from "react-icons/bi";
 import NewPost from "../../components/newPost";
 
 const NewPosts = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const role = location.pathname.split("/")[1]
   return (
     <div>
       <div className="p-10">
         <button
-          onClick={() => navigate("/author/dashboard")}
+          onClick={() => navigate(`/${role}/dashboard`)}
           className="mb-7 flex justify-center items-center text-blue-900 font-semibold transform transition-all duration-200 ease-out
            hover:text-blue-400 hover:translate-x-2 hover:shadow-lg cursor-pointer "
         >

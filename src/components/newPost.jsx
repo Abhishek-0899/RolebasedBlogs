@@ -3,8 +3,11 @@ import { CiLocationArrow1 } from "react-icons/ci";
 import { TfiSave } from "react-icons/tfi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
+import { saveDraft, reviewPost } from "../features/posts/postSlice";
 
 const NewPost = () => {
+  const dispatch = useDispatch();
   const [title, setTitle] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
@@ -15,7 +18,23 @@ const NewPost = () => {
   const isAllFieldsFilled =
     title.trim() !== "" && excerpt.trim() !== "" && content.trim() !== "";
 
+  const resetForm = () => {
+    setTitle("");
+    setExcerpt("");
+    setContent("");
+  };
+
   const handleSaveDraft = () => {
+    dispatch(
+      saveDraft({
+        id: Date.now(),
+        title,
+        excerpt,
+        content,
+        authorId: 1,
+        date: new Date().toLocaleDateString("en-US"),
+      }),
+    );
     toast.info("Post saved as draft!", {
       position: "top-center",
       autoClose: 2000,
@@ -24,11 +43,19 @@ const NewPost = () => {
       draggable: true,
       theme: "colored",
     });
-    setTitle("");
-    setExcerpt("");
-    setContent("");
+    resetForm();
   };
   const handleSubmit = () => {
+    dispatch(
+      reviewPost({
+        id: Date.now(),
+        title,
+        excerpt,
+        content,
+        authorId: 1,
+        date: new Date().toLocaleDateString("en-US"),
+      }),
+    );
     toast.success("Post send for review!", {
       position: "top-center",
       autoClose: 2000,
@@ -37,9 +64,7 @@ const NewPost = () => {
       draggable: true,
       theme: "colored",
     });
-    setTitle("");
-    setExcerpt("");
-    setContent("");
+    resetForm();
   };
 
   return (
