@@ -13,7 +13,7 @@ const NAV_ITEMS = {
   editor: [
     { label: "Dashboard", path: "/editor/dashboard" },
     { label: "Posts", path: "/editor/posts" },
-    { label: "New Posts", path: "/editor/newPost" },
+    { label: "new-posts", path: "/editor/new-posts" },
   ],
   author: [
     { label: "Dashboard", path: "/author/dashboard" },

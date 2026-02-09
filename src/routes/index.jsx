@@ -35,6 +35,7 @@ const router = createBrowserRouter([
     children: [
       { path: "dashboard", element: <AuthorDashboard /> },
       { path: "new-posts", element: <NewPosts /> },
+      { path: "new-posts/:id", element: <NewPosts /> },
       // { path: "/maganePost", element: <ManagePost /> },
     ],
   },
@@ -47,7 +48,9 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "dashboard", element: <EditorDashboard /> },
-      { path: "newPost", element: <CreatePost /> },
+      // { path: "newPost", element: <CreatePost /> },
+         { path: "new-posts", element: <NewPosts /> },
+           { path: "new-posts/:id", element: <NewPosts /> },
     ],
   },
 ]);
