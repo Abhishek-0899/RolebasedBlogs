@@ -6,6 +6,7 @@ const initialStatsData = {
     drafts: 0,
     review: 0,
     published: 0,
+    totalPosts: 0,
   },
 };
 
@@ -16,15 +17,21 @@ const PostSlice = createSlice({
     saveDraft(state, action) {
       state.posts.unshift({ ...action.payload, status: "draft" });
       state.stats.drafts += 1;
+      state.stats.totalPosts += 1;
     },
     reviewPost(state, action) {
       state.posts.unshift({ ...action.payload, status: "pending" });
       state.stats.review += 1;
+      state.stats.totalPosts += 1;
     },
     publishPost(state, action) {
-      state.posts.unshift({ ...action.payload, status: "published" });
+      const postId = action.payload;
+      const post = state.posts.find((p) => p.id === postId);
+      if (!post || post.status !== "pending") return;
+
+      post.status = "published";
+      state.stats.review -= 1;
       state.stats.published += 1;
-      if (state.stats.review > 0) state.stats.review -= 1;
     },
     deletePost(state, action) {
       const postId = action.payload;
@@ -33,7 +40,7 @@ const PostSlice = createSlice({
       if (postToDelete.status === "draft") state.stats.drafts -= 1;
       if (postToDelete.status === "pending") state.stats.review -= 1;
       if (postToDelete.status === "published") state.stats.published -= 1;
-
+      state.stats.totalPosts -= 1;
       state.posts = state.posts.filter((p) => p.id !== postId);
     },
   },

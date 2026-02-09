@@ -17,7 +17,7 @@ const router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       { path: "/", element: <Home /> },
-     { path: "/posts/:id", element: <PostID /> },
+      { path: "/posts/:id", element: <PostID /> },
       {
         path: "/login",
         element: <Login />,
@@ -36,7 +36,6 @@ const router = createBrowserRouter([
       { path: "dashboard", element: <AuthorDashboard /> },
       { path: "new-posts", element: <NewPosts /> },
       { path: "new-posts/:id", element: <NewPosts /> },
-      // { path: "/maganePost", element: <ManagePost /> },
     ],
   },
   {
@@ -48,9 +47,8 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "dashboard", element: <EditorDashboard /> },
-      // { path: "newPost", element: <CreatePost /> },
-         { path: "new-posts", element: <NewPosts /> },
-           { path: "new-posts/:id", element: <NewPosts /> },
+      { path: "new-posts", element: <NewPosts /> },
+      { path: "new-posts/:id", element: <NewPosts /> },
     ],
   },
 ]);

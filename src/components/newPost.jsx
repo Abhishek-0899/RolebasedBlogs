@@ -34,6 +34,7 @@ const NewPost = () => {
         authorId: 1,
         date: new Date().toLocaleDateString("en-US"),
       }),
+      console.log("Draft saved!"),
     );
     toast.info("Post saved as draft!", {
       position: "top-center",
@@ -55,6 +56,7 @@ const NewPost = () => {
         authorId: 1,
         date: new Date().toLocaleDateString("en-US"),
       }),
+         console.log("Post submitted for review!"),
     );
     toast.success("Post send for review!", {
       position: "top-center",
