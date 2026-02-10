@@ -15,14 +15,42 @@ const PostSlice = createSlice({
   initialState: initialStatsData,
   reducers: {
     saveDraft(state, action) {
-      state.posts.unshift({ ...action.payload, status: "draft" });
-      state.stats.drafts += 1;
-      state.stats.totalPosts += 1;
+      const index = state.posts.findIndex((p) => p.id === action.payload.id);
+      if (index !== -1) {
+        state.posts[index] = {
+          ...state.posts[index],
+          ...action.payload,
+          status: "draft",
+        };
+        const prevStatus = state.posts[index].status;
+        if (prevStatus !== "draft") {
+          state.stats.drafts += 1;
+          if (prevStatus === "pending") state.stats.review -= 1;
+        }
+      } else {
+        state.posts.unshift({ ...action.payload, status: "draft" });
+        state.stats.drafts += 1;
+        state.stats.totalPosts += 1;
+      }
     },
     reviewPost(state, action) {
-      state.posts.unshift({ ...action.payload, status: "pending" });
-      state.stats.review += 1;
-      state.stats.totalPosts += 1;
+      const index = state.posts.findIndex((p) => p.id === action.payload.id);
+      if (index !== -1) {
+        state.posts[index] = {
+          ...state.posts[index],
+          ...action.payload,
+          status: "pending",
+        };
+        const prevStatus = state.posts[index].status;
+        if (prevStatus !== "pending") {
+          state.stats.review += 1;
+          if (prevStatus === "draft") state.stats.drafts -= 1;
+        }
+      } else {
+        state.posts.unshift({ ...action.payload, status: "pending" });
+        state.stats.review += 1;
+        state.stats.totalPosts += 1;
+      }
     },
     publishPost(state, action) {
       const postId = action.payload;

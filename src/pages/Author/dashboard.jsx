@@ -15,11 +15,13 @@ const AuthorDashboard = () => {
   const statsData = useSelector((state) => state.posts.stats);
 
   /* ===== CURRENT AUTHOR ===== */
-  const currentAuthorId = 1;
+  const currentUserID = 1;
+  const currentRole = "author";
 
   /* ===== FILTER POSTS ===== */
   const authorPosts = posts.filter(
-    (post) => post.authorId === currentAuthorId
+    (post) =>
+      post.ownnerRole === currentRole && post.authorId === currentUserID,
   );
 
   /* ===== STATS ===== */
@@ -46,14 +48,13 @@ const AuthorDashboard = () => {
           )}
 
           {authorPosts.map((post) => (
-            <div
-              key={post.id}
-              className="bg-gray-200 rounded-lg p-5 mb-4"
-            >
+            <div key={post.id} className="bg-gray-200 rounded-lg p-5 mb-4">
               <div className="flex justify-between items-center">
                 <div className="flex gap-3 items-center">
                   <h3 className="text-xl font-semibold">{post.title}</h3>
-                  <span className={` px-2 py-1 rounded-lg capitalize ${post.status === "pending" ? "bg-yellow-400" : "bg-gray-300"}`}>
+                  <span
+                    className={` px-2 py-1 rounded-lg capitalize ${post.status === "pending" ? "bg-yellow-400" : "bg-gray-300"}`}
+                  >
                     {post.status}
                   </span>
                 </div>
@@ -61,7 +62,9 @@ const AuthorDashboard = () => {
                 <div className="flex gap-3">
                   <button
                     onClick={() =>
-                      navigate(`/author/new-posts/${post.id}`)
+                      navigate(`/author/new-posts/${post?.id}`, {
+                        state: { post },
+                      })
                     }
                     className="hover:bg-gray-300 p-1 rounded-lg"
                   >

@@ -1,22 +1,34 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CiLocationArrow1 } from "react-icons/ci";
 import { TfiSave } from "react-icons/tfi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { saveDraft, reviewPost } from "../features/posts/postSlice";
+import { useLocation } from "react-router-dom";
 
 const NewPost = () => {
   const dispatch = useDispatch();
-  const [title, setTitle] = useState("");
-  const [excerpt, setExcerpt] = useState("");
-  const [content, setContent] = useState("");
+  const location = useLocation();
+  const post = location?.state?.post;
+  const [title, setTitle] = useState(post?.title || "");
+  const [excerpt, setExcerpt] = useState(post?.excerpt || "");
+  const [content, setContent] = useState(post?.content || "");
 
   const isAnyfiledEmpty =
     title.trim() !== "" || excerpt.trim() !== "" || content.trim() !== "";
 
   const isAllFieldsFilled =
     title.trim() !== "" && excerpt.trim() !== "" && content.trim() !== "";
+
+  const postId = post?.id || Date.now();
+  useEffect(() => {
+    if (post) {
+      setTitle(post.title);
+      setExcerpt(post.excerpt);
+      setContent(post.content);
+    }
+  }, [post]);
 
   const resetForm = () => {
     setTitle("");
@@ -27,14 +39,13 @@ const NewPost = () => {
   const handleSaveDraft = () => {
     dispatch(
       saveDraft({
-        id: Date.now(),
+        id: postId,
         title,
         excerpt,
         content,
         authorId: 1,
-        date: new Date().toLocaleDateString("en-US"),
+        date: post?.date ?? new Date().toLocaleDateString("en-US"),
       }),
-      console.log("Draft saved!"),
     );
     toast.info("Post saved as draft!", {
       position: "top-center",
@@ -49,14 +60,13 @@ const NewPost = () => {
   const handleSubmit = () => {
     dispatch(
       reviewPost({
-        id: Date.now(),
+        id: postId,
         title,
         excerpt,
         content,
         authorId: 1,
-        date: new Date().toLocaleDateString("en-US"),
+        date: post?.date ?? new Date().toLocaleDateString("en-US"),
       }),
-         console.log("Post submitted for review!"),
     );
     toast.success("Post send for review!", {
       position: "top-center",
