@@ -11,17 +11,17 @@ const EditorDashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const dateTime = new Date().toLocaleDateString("en-US");
+
+  /* ===== READ FROM REDUX ===== */
   const posts = useSelector((state) => state.posts.posts);
   const statsData = useSelector((state) => state.posts.stats);
 
   const [filter, setFilter] = useState("pending");
-
-  // const authorId = 1;
-  // const editorPost = posts.filter((post) => post.authorId === authorId);
   const editorPost =
-    filter === "pending"
-      ? posts.filter((post) => post.status === "pending")
-      : posts;
+  filter === "pending"
+  ? posts.filter((post) => post.status === "pending")
+  : posts;
+  
 
   /* ===== STATS ===== */
   const stats = getDashboardStats({ role: "editor", data: statsData });
@@ -42,13 +42,21 @@ const EditorDashboard = () => {
               <div className="flex gap-3">
                 <button
                   onClick={() => setFilter("pending")}
-                  className="rounded-xl p-2 bg-blue-400"
+                  className={`rounded-xl p-2 ${
+                    filter === "pending"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-400 text-black"
+                  }`}
                 >
                   Pending Only
                 </button>
                 <button
                   onClick={() => setFilter("draft")}
-                  className={`rounded-xl p-2 bg-gray-400 hover:bg-blue-500`}
+                  className={`rounded-xl p-2 ${
+                    filter !== "pending"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-400 text-black"
+                  }`}
                 >
                   All Posts
                 </button>

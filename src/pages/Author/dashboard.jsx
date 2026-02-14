@@ -14,15 +14,21 @@ const AuthorDashboard = () => {
   const posts = useSelector((state) => state.posts.posts);
   const statsData = useSelector((state) => state.posts.stats);
 
-  /* ===== CURRENT AUTHOR ===== */
-  const currentUserID = 1;
-  const currentRole = "author";
+  // /* ===== CURRENT AUTHOR ===== */
+  // const currentUserID = 1;
+  // const currentRole = "author";
 
-  /* ===== FILTER POSTS ===== */
-  const authorPosts = posts.filter(
-    (post) =>
-      post.ownnerRole === currentRole && post.authorId === currentUserID,
-  );
+  // /* ===== FILTER POSTS ===== */
+
+  const currentUserID = "author";
+
+  const authorPosts = posts.filter((post) => post.authorId === currentUserID);
+  // const authorPosts = posts;
+
+  // const authorPost =
+  // role === "author"
+  //   ? posts.filter((post) => post.authorId === user.id)
+  //   : [];  //
 
   /* ===== STATS ===== */
   const stats = getDashboardStats({

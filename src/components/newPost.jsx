@@ -3,24 +3,30 @@ import { CiLocationArrow1 } from "react-icons/ci";
 import { TfiSave } from "react-icons/tfi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { saveDraft, reviewPost } from "../features/posts/postSlice";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useRole } from "../hooks/useRole";
+import { useAuth } from "../hooks/useAuth";
 
 const NewPost = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate()
+
+const { user } = useAuth();
+const { role } = useRole();
+
   const post = location?.state?.post;
   const [title, setTitle] = useState(post?.title || "");
   const [excerpt, setExcerpt] = useState(post?.excerpt || "");
   const [content, setContent] = useState(post?.content || "");
-
   const isAnyfiledEmpty =
-    title.trim() !== "" || excerpt.trim() !== "" || content.trim() !== "";
-
+  title.trim() !== "" || excerpt.trim() !== "" || content.trim() !== "";
+  
   const isAllFieldsFilled =
-    title.trim() !== "" && excerpt.trim() !== "" && content.trim() !== "";
-
+  title.trim() !== "" && excerpt.trim() !== "" && content.trim() !== "";
+  
   const postId = post?.id || Date.now();
   useEffect(() => {
     if (post) {
@@ -29,24 +35,28 @@ const NewPost = () => {
       setContent(post.content);
     }
   }, [post]);
-
+  
+  const currentUserId = user?.role;
+ 
   const resetForm = () => {
     setTitle("");
     setExcerpt("");
     setContent("");
   };
 
+  const buildPayload = () => ({
+    id: postId,
+    title,
+    excerpt,
+    content,
+    authorId: currentUserId,
+    date: post?.date ?? new Date().toLocaleDateString("en-US"),
+  });
+
   const handleSaveDraft = () => {
-    dispatch(
-      saveDraft({
-        id: postId,
-        title,
-        excerpt,
-        content,
-        authorId: 1,
-        date: post?.date ?? new Date().toLocaleDateString("en-US"),
-      }),
-    );
+    const payload = buildPayload();
+    dispatch(saveDraft(payload));
+    // console.log("Saving Draft:", payload);
     toast.info("Post saved as draft!", {
       position: "top-center",
       autoClose: 2000,
@@ -55,19 +65,13 @@ const NewPost = () => {
       draggable: true,
       theme: "colored",
     });
+    // console.log("role",role)
     resetForm();
   };
+
   const handleSubmit = () => {
-    dispatch(
-      reviewPost({
-        id: postId,
-        title,
-        excerpt,
-        content,
-        authorId: 1,
-        date: post?.date ?? new Date().toLocaleDateString("en-US"),
-      }),
-    );
+    const payload = buildPayload();
+    dispatch(reviewPost(payload));
     toast.success("Post send for review!", {
       position: "top-center",
       autoClose: 2000,
@@ -76,7 +80,10 @@ const NewPost = () => {
       draggable: true,
       theme: "colored",
     });
+      // navigate(`/${role}/dashboard`)
+
     resetForm();
+  
   };
 
   return (

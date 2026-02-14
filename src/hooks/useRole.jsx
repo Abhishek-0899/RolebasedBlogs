@@ -21,6 +21,6 @@ export const useRole = (userId) => {  // ← Add userId param
         setLoading(false)
       })
   }, [userId])  // ← Fixed dependency
-
+console.log(userId)
   return { role, loading }
 }

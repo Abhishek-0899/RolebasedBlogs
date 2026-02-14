@@ -37,6 +37,7 @@ const Login = () => {
     }
 
     const role = profileData?.role || "reader";
+    console.log(role)
 
     const roleRoute = {
       author: "/author/dashboard",
