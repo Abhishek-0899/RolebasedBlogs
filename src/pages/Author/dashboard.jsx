@@ -14,21 +14,11 @@ const AuthorDashboard = () => {
   const posts = useSelector((state) => state.posts.posts);
   const statsData = useSelector((state) => state.posts.stats);
 
-  // /* ===== CURRENT AUTHOR ===== */
-  // const currentUserID = 1;
-  // const currentRole = "author";
-
   // /* ===== FILTER POSTS ===== */
 
   const currentUserID = "author";
 
   const authorPosts = posts.filter((post) => post.authorId === currentUserID);
-  // const authorPosts = posts;
-
-  // const authorPost =
-  // role === "author"
-  //   ? posts.filter((post) => post.authorId === user.id)
-  //   : [];  //
 
   /* ===== STATS ===== */
   const stats = getDashboardStats({
@@ -59,7 +49,7 @@ const AuthorDashboard = () => {
                 <div className="flex gap-3 items-center">
                   <h3 className="text-xl font-semibold">{post.title}</h3>
                   <span
-                    className={` px-2 py-1 rounded-lg capitalize ${post.status === "pending" ? "bg-yellow-400" : "bg-gray-300"}`}
+                    className={` px-2 py-1 rounded-lg capitalize ${post.status === "pending" ? "bg-yellow-400" : post.status === "published" ? "bg-green-500" : "bg-gray-300"}`}
                   >
                     {post.status}
                   </span>
@@ -74,7 +64,11 @@ const AuthorDashboard = () => {
                     }
                     className="hover:bg-gray-300 p-1 rounded-lg"
                   >
-                    <img src={editImage} className="w-6 h-6" />
+                    {post.status !== "published" ? (
+                      <img src={editImage} className="w-6 h-6" />
+                    ) : (
+                      ""
+                    )}
                   </button>
 
                   <button

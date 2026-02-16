@@ -9,9 +9,10 @@ import Authorlayout from "../components/layout/Author-Layout";
 import Editorlayout from "../components/layout/Editor-Layout";
 import AuthorDashboard from "../pages/Author/dashboard";
 import EditorDashboard from "../pages/Editor/dashboard";
-import CreatePost from "../pages/Editor/createPost";
 import PostID from "../pages/PostIDs";
 import NewPosts from "../pages/Author/newPosts";
+import Post from "../components/Post";
+import ManagePost from "../pages/Editor/managePost";
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
@@ -36,6 +37,7 @@ const router = createBrowserRouter([
       { path: "dashboard", element: <AuthorDashboard /> },
       { path: "new-posts", element: <NewPosts /> },
       { path: "new-posts/:id", element: <NewPosts /> },
+      { path: "Posts", element: <ManagePost /> },
     ],
   },
   {
@@ -49,6 +51,7 @@ const router = createBrowserRouter([
       { path: "dashboard", element: <EditorDashboard /> },
       { path: "new-posts", element: <NewPosts /> },
       { path: "new-posts/:id", element: <NewPosts /> },
+      { path: "Posts", element: <ManagePost /> },
     ],
   },
 ]);

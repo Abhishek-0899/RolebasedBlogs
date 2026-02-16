@@ -11,7 +11,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 const Home = () => {
-    const {id} = useParams()
+  const { id } = useParams();
   const [search, setSearch] = useState("");
   const [likes, setlikes] = useState(0);
   const [comments, setComments] = useState(0);
@@ -21,14 +21,21 @@ const Home = () => {
   return (
     <>
       <Navbar />
-      <div className="p-10">
+      {/* <div className="p-10 mx-auto w-1/2"> */}
+    <div className="px-[15rem] pt-10">
+        {" "}
         <div>
           <Header />
           <SearchBar
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <Post todayDate={todayDate} likes={likes} comments={comments} id={id}/>
+          <Post
+            todayDate={todayDate}
+            likes={likes}
+            comments={comments}
+            id={id}
+          />
 
           <br />
         </div>

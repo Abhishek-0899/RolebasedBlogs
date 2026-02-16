@@ -5,7 +5,7 @@ import acceptImage from "../../assets/accept.png";
 import declineImage from "../../assets/decline.png";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { deletePost } from "../../features/posts/postSlice";
+import { deletePost, publishPost } from "../../features/posts/postSlice";
 import { useState } from "react";
 const EditorDashboard = () => {
   const navigate = useNavigate();
@@ -18,13 +18,17 @@ const EditorDashboard = () => {
 
   const [filter, setFilter] = useState("pending");
   const editorPost =
-  filter === "pending"
-  ? posts.filter((post) => post.status === "pending")
-  : posts;
-  
+    filter === "pending"
+      ? posts.filter((post) => post.status === "pending")
+      : posts;
 
   /* ===== STATS ===== */
   const stats = getDashboardStats({ role: "editor", data: statsData });
+
+  const postPublished = (id) => {
+    dispatch(publishPost(id));
+    setFilter("draft");
+  };
 
   return (
     <div className="">
@@ -77,7 +81,7 @@ const EditorDashboard = () => {
                       <div className="flex gap-3 items-center">
                         <h3 className="text-xl font-semibold">{post.title}</h3>{" "}
                         <span
-                          className={`px-2 py-1 rounded-lg capitalize ${post.status === "pending" ? "bg-yellow-400" : "bg-gray-300"}`}
+                          className={`px-2 py-1 rounded-lg capitalize ${post.status === "pending" ? "bg-yellow-400" : post.status === "published" ? "bg-green-500" : "bg-gray-300"}`}
                         >
                           {post.status}
                         </span>
@@ -96,7 +100,7 @@ const EditorDashboard = () => {
                               View
                             </button>
                             <button
-                              // onClick={() => dispatch(deletePost(post.id))}
+                              onClick={() => postPublished(post.id)}
                               className="hover:bg-gray-300 p-1 rounded-lg"
                             >
                               <img
