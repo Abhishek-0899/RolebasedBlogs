@@ -3,7 +3,6 @@ import { AiFillAmazonCircle } from "react-icons/ai";
 import { AiOutlineHeart } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa";
 
-import Navbar from "../components/navbar";
 import Header from "../components/Header";
 import Post from "../components/Post";
 import SearchBar from "../components/SeachInput";
@@ -20,7 +19,6 @@ const Home = () => {
 
   return (
     <>
-      <Navbar />
       {/* <div className="p-10 mx-auto w-1/2"> */}
     <div className="px-[15rem] pt-10">
         {" "}

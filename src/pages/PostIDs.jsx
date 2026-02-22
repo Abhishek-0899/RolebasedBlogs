@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiFillAmazonCircle, AiOutlineHeart } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa";
-import Navbar from "../components/navbar";
+import { useAuth } from "../hooks/useAuth";
 
 const PostID = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const PostID = () => {
   const [liked, setLiked] = useState(false);
   const [CoutComment, setCountComment] = useState([]);
   const [commentText, setCommentText] = useState("");
-
+  const { user } = useAuth();
   const handleComment = () => {
     if (commentText.trim()) {
       //   setCountComment((c) => c + 1);
@@ -29,13 +29,21 @@ const PostID = () => {
     }
     setLiked(!liked);
   };
+  const role = user?.role;
+  const DASHBOARD_ROUTES = {
+    editor: "/editor/dashboard",
+    author: "/author/dashboard",
+    reader: "/",
+  };
+  const getDashboardRoute = (role) => {
+    return DASHBOARD_ROUTES[role] || "/";
+  };
 
   return (
     <>
-      <Navbar />
       <div className="p-10">
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate(getDashboardRoute(role))}
           className="mb-7 flex justify-center items-center text-blue-900 font-semibold transform transition-all duration-200 ease-out
       hover:text-blue-400 hover:translate-x-2 hover:shadow-lg cursor-pointer "
         >

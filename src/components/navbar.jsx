@@ -51,7 +51,7 @@ const Navbar = () => {
       navigate("/author/dashboard")
     }
     else if(role === "editor"){
-      navigate("editor")
+      navigate("/editor/dashboard")
     }
     else{
       navigate("/")

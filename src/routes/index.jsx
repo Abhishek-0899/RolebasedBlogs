@@ -1,4 +1,4 @@
-import React from "react";
+// router/index.jsx
 import { createBrowserRouter } from "react-router-dom";
 import AppLayout from "../components/layout/appLayout";
 import Home from "../pages/Home";
@@ -11,19 +11,19 @@ import AuthorDashboard from "../pages/Author/dashboard";
 import EditorDashboard from "../pages/Editor/dashboard";
 import PostID from "../pages/PostIDs";
 import NewPosts from "../pages/Author/newPosts";
-import Post from "../components/Post";
 import ManagePost from "../pages/Editor/managePost";
+
 const router = createBrowserRouter([
+  // Auth pages (without navbar)
+  { path: "/login", element: <Login /> },
+  { path: "/SignIn", element: <SignIn /> },
+  
+  // Main layout pages (with navbar)
   {
     element: <AppLayout />,
     children: [
       { path: "/", element: <Home /> },
-      { path: "/posts/:id", element: <PostID /> },
-      {
-        path: "/login",
-        element: <Login />,
-      },
-      { path: "/SignIn", element: <SignIn /> },
+      { path: "Posts/:id", element: <PostID /> },
     ],
   },
   {
@@ -38,6 +38,7 @@ const router = createBrowserRouter([
       { path: "new-posts", element: <NewPosts /> },
       { path: "new-posts/:id", element: <NewPosts /> },
       { path: "Posts", element: <ManagePost /> },
+      { path: "Posts/:id", element: <PostID /> }, // ✅ dynamic post
     ],
   },
   {
@@ -52,6 +53,7 @@ const router = createBrowserRouter([
       { path: "new-posts", element: <NewPosts /> },
       { path: "new-posts/:id", element: <NewPosts /> },
       { path: "Posts", element: <ManagePost /> },
+      { path: "Posts/:id", element: <PostID /> }, // ✅ dynamic post
     ],
   },
 ]);
