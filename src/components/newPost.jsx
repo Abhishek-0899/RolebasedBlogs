@@ -3,30 +3,31 @@ import { CiLocationArrow1 } from "react-icons/ci";
 import { TfiSave } from "react-icons/tfi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { saveDraft, reviewPost } from "../features/posts/postSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useRole } from "../hooks/useRole";
 import { useAuth } from "../hooks/useAuth";
+import supabase from "../utils/supabase";
 
 const NewPost = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-const { user } = useAuth();
-const { role } = useRole();
+  const { user } = useAuth();
+  const { role } = useRole();
 
   const post = location?.state?.post;
   const [title, setTitle] = useState(post?.title || "");
   const [excerpt, setExcerpt] = useState(post?.excerpt || "");
   const [content, setContent] = useState(post?.content || "");
   const isAnyfiledEmpty =
-  title.trim() !== "" || excerpt.trim() !== "" || content.trim() !== "";
-  
+    title.trim() !== "" || excerpt.trim() !== "" || content.trim() !== "";
+
   const isAllFieldsFilled =
-  title.trim() !== "" && excerpt.trim() !== "" && content.trim() !== "";
-  
+    title.trim() !== "" && excerpt.trim() !== "" && content.trim() !== "";
+
   const postId = post?.id || Date.now();
   useEffect(() => {
     if (post) {
@@ -35,9 +36,9 @@ const { role } = useRole();
       setContent(post.content);
     }
   }, [post]);
-  
-  const currentUserId = user?.role;
- 
+
+  const currentUserId = user?.id;
+
   const resetForm = () => {
     setTitle("");
     setExcerpt("");
@@ -53,10 +54,31 @@ const { role } = useRole();
     date: post?.date ?? new Date().toLocaleDateString("en-US"),
   });
 
-  const handleSaveDraft = () => {
-    const payload = buildPayload();
-    dispatch(saveDraft(payload));
+  const handleSaveDraft = async () => {
+    // dispatch(saveDraft(payload));
     // console.log("Saving Draft:", payload);
+    
+    if (!user) return;
+    const { data, error } = await supabase
+    .from("posts")
+    .insert([
+      {
+        title,
+        excerpt,
+        content,
+        created_by: user.id,
+        status: "draft",
+      },
+    ])
+    .select()
+    .single();
+    console.log("data : ", data);
+    if (error) {
+      console.log(error);
+      toast.error("Error saving draft", { theme: "colored" });
+      return;
+    }
+    
     toast.info("Post saved as draft!", {
       position: "top-center",
       autoClose: 2000,
@@ -65,13 +87,40 @@ const { role } = useRole();
       draggable: true,
       theme: "colored",
     });
+    
+    const payload = buildPayload();
+    //  🔥 update redux with real DB data;
+    dispatch(saveDraft(payload))
+    console.log(payload)
+
     // console.log("role",role)
     resetForm();
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    // dispatch(reviewPost(payload));
+    
+    if (!user) return;
+    const { data, error } = await supabase
+    .from("posts")
+    .insert([
+      {
+        title,
+        excerpt,
+        content,
+        created_by: user?.id,
+        status: role === "editor" ? "published" : "pending",
+      },
+    ])
+    .select().single();
     const payload = buildPayload();
-    dispatch(reviewPost(payload));
+    dispatch(reviewPost(payload))
+    console.log("data : ", data);
+    if (error) {
+      console.log(error);
+      toast.error("Error in submitting post", { theme: "colored" });
+      return;
+    }
     toast.success("Post send for review!", {
       position: "top-center",
       autoClose: 2000,
@@ -80,10 +129,9 @@ const { role } = useRole();
       draggable: true,
       theme: "colored",
     });
-      // navigate(`/${role}/dashboard`)
+    // navigate(`/${role}/dashboard`)
 
     resetForm();
-  
   };
 
   return (

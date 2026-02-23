@@ -22,12 +22,31 @@ const SignIn = () => {
     // ✅ STEP 1: Create user
     const { data, error: authError } = await supabase.auth.signUp({
       email,
-      name,
       password,
+      options: {
+        data: {
+          name: name,
+        },
+      },
     });
 
     if (authError) {
       alert(authError.message);
+      setloading(false);
+      return;
+    }
+
+    const user = data.user;
+    const session = data.session;
+
+    if (!user) {
+      alert("Signup failed");
+      setloading(false);
+      return;
+    }
+
+    if (!session) {
+      alert("please verify credentials");
       setloading(false);
       return;
     }
@@ -40,7 +59,7 @@ const SignIn = () => {
     const { error: profileError } = await supabase
       .from("profiles")
       .insert({
-        id: userId,
+        id: user.id,
         role: role.toLowerCase(),
       })
       .select();

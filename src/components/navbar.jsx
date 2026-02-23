@@ -7,9 +7,7 @@ import { useRole } from "../hooks/useRole";
 
 // Define navigation items for each role
 const NAV_ITEMS = {
-  reader: [
-    { label: "Dashboard", path: "/" },
-  ],
+  reader: [{ label: "Dashboard", path: "/" }],
   editor: [
     { label: "Dashboard", path: "/editor/dashboard" },
     { label: "Posts", path: "/editor/posts" },
@@ -42,28 +40,34 @@ const Navbar = () => {
     if (error) {
       alert(error.message);
     } else {
+      setUserId(null);
       navigate("/login");
     }
   };
 
-  const dashboardNavigate=()=>{
-    if(role == "author"){
-      navigate("/author/dashboard")
+  const dashboardNavigate = () => {
+    if (role == "author") {
+      navigate("/author/dashboard");
+    } else if (role === "editor") {
+      navigate("/editor/dashboard");
+    } else {
+      navigate("/");
     }
-    else if(role === "editor"){
-      navigate("/editor/dashboard")
-    }
-    else{
-      navigate("/")
-    }
-  }
+  };
 
   return (
     <div className="flex justify-between items-center p-2 w-full bg-gray-200 sticky top-0 z-50">
       {/* Logo */}
       <div className="flex ml-5 items-center gap-2">
-        <img className="w-10 h-10" src={img1} alt="Logo" onClick={()=>dashboardNavigate()}/>
-        <h1 onClick={()=>dashboardNavigate()} className="font-bold text-lg">BlobHib</h1>
+        <img
+          className="w-10 h-10"
+          src={img1}
+          alt="Logo"
+          onClick={() => dashboardNavigate()}
+        />
+        <h1 onClick={() => dashboardNavigate()} className="font-bold text-lg">
+          BlobHib
+        </h1>
       </div>
 
       {/* Navigation Items */}
