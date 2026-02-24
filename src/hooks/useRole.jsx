@@ -6,6 +6,7 @@ export const useRole = (userId) => {  // ← Add userId param
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    setLoading(true)
     if (!userId) {
       setLoading(false)
       return

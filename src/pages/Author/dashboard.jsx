@@ -20,7 +20,6 @@ const AuthorDashboard = () => {
 
   /* ===== READ FROM REDUX ===== */
   const posts = useSelector((state) => state.posts.posts);
-  const statsData = useSelector((state) => state.posts.stats);
 
   // /* ===== FILTER POSTS ===== */
 
@@ -29,9 +28,17 @@ const AuthorDashboard = () => {
   const authorPosts = posts.filter((post) => post.created_by === currentUserID);
 
   /* ===== STATS ===== */
+  // Calculate stats for current author only
+  const authorStats = {
+    drafts: authorPosts.filter((p) => p.status === "draft").length,
+    review: authorPosts.filter((p) => p.status === "pending").length,
+    published: authorPosts.filter((p) => p.status === "published").length,
+    totalPosts: authorPosts.length,
+  };
+
   const stats = getDashboardStats({
     role: "author",
-    data: statsData,
+    data: authorStats,
   });
 
   return (

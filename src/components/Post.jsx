@@ -16,15 +16,15 @@ const Post = ({ todayDate }) => {
 
   const role = user.role; // author/editor
   console.log(role);
-  
+
   // Filter posts based on role
   let filteredPosts = posts;
   if (role === "author") {
     // Authors can only see their own posts
-    filteredPosts = posts.filter((post) => post.authorId === user.id);
+    filteredPosts = posts.filter((post) => post.created_by === user.id);
   }
   // Editors see all posts (for review)
-  
+
   if (!filteredPosts || filteredPosts.length === 0) {
     return <p className="p-4 flex justify-center">No posts available</p>;
   }

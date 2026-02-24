@@ -24,13 +24,20 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
 
-  // Get logged-in user
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUserId(data?.user?.id || null);
-    });
-  }, []);
+    const getInitialUser = async () => {
+      const { data } = await supabase.auth.getSession();
+      setUserId(data?.session?.user?.id || null);
+    };
+    getInitialUser();
 
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUserId(session?.user?.id || null);
+      },
+    );
+    return () => listener.subscription.unsubscribe();
+  }, []);
   // Get role of the user
   const { role, loading } = useRole(userId);
 
@@ -40,8 +47,7 @@ const Navbar = () => {
     if (error) {
       alert(error.message);
     } else {
-      setUserId(null);
-      navigate("/login");
+      navigate("/login", { replace: true });
     }
   };
 
