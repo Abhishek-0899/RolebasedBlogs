@@ -5,12 +5,21 @@ import acceptImage from "../../assets/accept.png";
 import declineImage from "../../assets/decline.png";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { deletePost, publishPost } from "../../features/posts/postSlice";
-import { useState } from "react";
+import {
+  deletePost,
+  fetchPosts,
+  publishPost,
+} from "../../features/posts/postSlice";
+import { useState, useEffect } from "react";
 const EditorDashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const dateTime = new Date().toLocaleDateString("en-US");
+
+  // ✅ Fetch posts from Supabase on mount
+  useEffect(() => {
+    dispatch(fetchPosts());
+  }, [dispatch]);
 
   /* ===== READ FROM REDUX ===== */
   const posts = useSelector((state) => state.posts.posts);

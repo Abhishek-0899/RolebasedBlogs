@@ -4,11 +4,19 @@ import editImage from "../../assets/edit.png";
 import deleteImage from "../../assets/delete.png";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { deletePost } from "../../features/posts/postSlice";
+import { deletePost, fetchPosts } from "../../features/posts/postSlice";
+import { useEffect } from "react";
+import { useAuth } from "../../hooks/useAuth";
 
 const AuthorDashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { user } = useAuth();
+
+  // ✅ Fetch posts from Supabase on mount
+  useEffect(() => {
+    dispatch(fetchPosts());
+  }, [dispatch]);
 
   /* ===== READ FROM REDUX ===== */
   const posts = useSelector((state) => state.posts.posts);
@@ -16,9 +24,9 @@ const AuthorDashboard = () => {
 
   // /* ===== FILTER POSTS ===== */
 
-  const currentUserID = "author";
+  const currentUserID = user?.id;
 
-  const authorPosts = posts.filter((post) => post.authorId === currentUserID);
+  const authorPosts = posts.filter((post) => post.created_by === currentUserID);
 
   /* ===== STATS ===== */
   const stats = getDashboardStats({

@@ -4,8 +4,8 @@ import { TfiSave } from "react-icons/tfi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
-import { saveDraft, reviewPost } from "../features/posts/postSlice";
-import { useLocation, useNavigate } from "react-router-dom";
+import { fetchPosts } from "../features/posts/postSlice";
+import { useLocation } from "react-router-dom";
 import { useRole } from "../hooks/useRole";
 import { useAuth } from "../hooks/useAuth";
 import supabase from "../utils/supabase";
@@ -13,12 +13,13 @@ import supabase from "../utils/supabase";
 const NewPost = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const navigate = useNavigate();
 
   const { user } = useAuth();
   const { role } = useRole();
 
   const post = location?.state?.post;
+  const isPublished = post?.status === "published";
+  
   const [title, setTitle] = useState(post?.title || "");
   const [excerpt, setExcerpt] = useState(post?.excerpt || "");
   const [content, setContent] = useState(post?.content || "");
@@ -28,7 +29,6 @@ const NewPost = () => {
   const isAllFieldsFilled =
     title.trim() !== "" && excerpt.trim() !== "" && content.trim() !== "";
 
-  const postId = post?.id || Date.now();
   useEffect(() => {
     if (post) {
       setTitle(post.title);
@@ -37,27 +37,13 @@ const NewPost = () => {
     }
   }, [post]);
 
-  const currentUserId = user?.id;
-
   const resetForm = () => {
     setTitle("");
     setExcerpt("");
     setContent("");
   };
 
-  const buildPayload = () => ({
-    id: postId,
-    title,
-    excerpt,
-    content,
-    authorId: currentUserId,
-    date: post?.date ?? new Date().toLocaleDateString("en-US"),
-  });
-
   const handleSaveDraft = async () => {
-    // dispatch(saveDraft(payload));
-    // console.log("Saving Draft:", payload);
-    
     if (!user) return;
     const { data, error } = await supabase
     .from("posts")
@@ -88,18 +74,12 @@ const NewPost = () => {
       theme: "colored",
     });
     
-    const payload = buildPayload();
-    //  🔥 update redux with real DB data;
-    dispatch(saveDraft(payload))
-    console.log(payload)
-
-    // console.log("role",role)
+    // ✅ Fetch fresh posts from Supabase instead of local dispatch
+    dispatch(fetchPosts());
     resetForm();
   };
 
   const handleSubmit = async () => {
-    // dispatch(reviewPost(payload));
-    
     if (!user) return;
     const { data, error } = await supabase
     .from("posts")
@@ -113,14 +93,14 @@ const NewPost = () => {
       },
     ])
     .select().single();
-    const payload = buildPayload();
-    dispatch(reviewPost(payload))
-    console.log("data : ", data);
+    
     if (error) {
       console.log(error);
       toast.error("Error in submitting post", { theme: "colored" });
       return;
     }
+    
+    console.log("data : ", data);
     toast.success("Post send for review!", {
       position: "top-center",
       autoClose: 2000,
@@ -129,8 +109,9 @@ const NewPost = () => {
       draggable: true,
       theme: "colored",
     });
-    // navigate(`/${role}/dashboard`)
-
+    
+    // ✅ Fetch fresh posts from Supabase instead of local dispatch
+    dispatch(fetchPosts());
     resetForm();
   };
 
@@ -159,7 +140,8 @@ const NewPost = () => {
               rows={1}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className=" w-full h-16 px-3 py-2 border-2 rounded-lg text-base resize-none overflow-hidden"
+              readOnly={isPublished}
+              className={`w-full h-16 px-3 py-2 border-2 rounded-lg text-base resize-none overflow-hidden ${isPublished ? "bg-gray-100 cursor-not-allowed" : ""}`}
               placeholder="Enter post title..."
             />
           </div>
@@ -170,7 +152,8 @@ const NewPost = () => {
             <textarea
               value={excerpt}
               onChange={(e) => setExcerpt(e.target.value)}
-              className="w-full h-20 px-3 py-2 border-2 rounded-lg text-base resize-none"
+              readOnly={isPublished}
+              className={`w-full h-20 px-3 py-2 border-2 rounded-lg text-base resize-none ${isPublished ? "bg-gray-100 cursor-not-allowed" : ""}`}
               placeholder="Brief summary of your post..."
             />
           </div>
@@ -181,17 +164,24 @@ const NewPost = () => {
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full min-h-[160px] px-3 py-2 border-2 rounded-lg text-base"
+              readOnly={isPublished}
+              className={`w-full min-h-[160px] px-3 py-2 border-2 rounded-lg text-base ${isPublished ? "bg-gray-100 cursor-not-allowed" : ""}`}
               placeholder="Write your post content here..."
             />
           </div>
           <hr className="border-1" />
 
+          {isPublished && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+              ✓ This post has been published and is now read-only.
+            </div>
+          )}
+
           <div className="flex gap-4">
             <button
-              disabled={!isAnyfiledEmpty}
+              disabled={!isAnyfiledEmpty || isPublished}
               className={`flex items-center bg-gray-700 text-white gap-2 p-2 border rounded-xl 
-                  ${!isAnyfiledEmpty ? "hover:bg-gray-900" : "disabled:opacity-50 cursor-not-allowed"}
+                  ${!isAnyfiledEmpty || isPublished ? "disabled:opacity-50 cursor-not-allowed" : "hover:bg-gray-900"}
                 `}
               onClick={handleSaveDraft}
             >
@@ -199,9 +189,9 @@ const NewPost = () => {
               Save Draft
             </button>
             <button
-              disabled={!isAllFieldsFilled}
+              disabled={!isAllFieldsFilled || isPublished}
               className={`flex items-center bg-gray-700 text-white gap-2 p-2 border rounded-xl 
-                    ${isAllFieldsFilled ? "hover:bg-gray-900" : "disabled:opacity-50 cursor-not-allowed"}
+                    ${isAllFieldsFilled && !isPublished ? "hover:bg-gray-900" : "disabled:opacity-50 cursor-not-allowed"}
                 `}
               onClick={handleSubmit}
             >
