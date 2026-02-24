@@ -19,7 +19,7 @@ const NewPost = () => {
 
   const post = location?.state?.post;
   const isPublished = post?.status === "published";
-  
+
   const [title, setTitle] = useState(post?.title || "");
   const [excerpt, setExcerpt] = useState(post?.excerpt || "");
   const [content, setContent] = useState(post?.content || "");
@@ -45,26 +45,40 @@ const NewPost = () => {
 
   const handleSaveDraft = async () => {
     if (!user) return;
-    const { data, error } = await supabase
-    .from("posts")
-    .insert([
-      {
-        title,
-        excerpt,
-        content,
-        created_by: user.id,
-        status: "draft",
-      },
-    ])
-    .select()
-    .single();
+    let query;
+    if (post?.id) {
+      query = supabase
+        .from("posts")
+        .update({
+          title,
+          excerpt,
+          content,
+          status: "draft",
+        })
+        .eq("id", post.id)
+        .select()
+        .single();
+    } else {
+      query = supabase
+        .from("posts")
+        .insert({
+          title,
+          excerpt,
+          content,
+          created_by: user.id,
+          status: "draft",
+        })
+        .select()
+        .single();
+    }
+    const { data, error } = await query;
     console.log("data : ", data);
     if (error) {
       console.log(error);
       toast.error("Error saving draft", { theme: "colored" });
       return;
     }
-    
+
     toast.info("Post saved as draft!", {
       position: "top-center",
       autoClose: 2000,
@@ -73,7 +87,7 @@ const NewPost = () => {
       draggable: true,
       theme: "colored",
     });
-    
+
     // ✅ Fetch fresh posts from Supabase instead of local dispatch
     dispatch(fetchPosts());
     resetForm();
@@ -81,25 +95,42 @@ const NewPost = () => {
 
   const handleSubmit = async () => {
     if (!user) return;
-    const { data, error } = await supabase
-    .from("posts")
-    .insert([
-      {
-        title,
-        excerpt,
-        content,
-        created_by: user?.id,
-        status: role === "editor" ? "published" : "pending",
-      },
-    ])
-    .select().single();
-    
+    const newStatus = role === "editor" ? "published" : "pending";
+    let query;
+    if (post?.id) {
+      // UPDATE
+      query = supabase
+        .from("posts")
+        .update({
+          title,
+          excerpt,
+          content,
+          status: newStatus,
+        })
+        .eq("id", post.id)
+        .select()
+        .single();
+    } else {
+      // INSERT
+      query = supabase
+        .from("posts")
+        .insert({
+          title,
+          excerpt,
+          content,
+          created_by: user.id,
+          status: newStatus,
+        })
+        .select()
+        .single();
+    }
+    const { data, error } = await query;
     if (error) {
       console.log(error);
       toast.error("Error in submitting post", { theme: "colored" });
       return;
     }
-    
+
     console.log("data : ", data);
     toast.success("Post send for review!", {
       position: "top-center",
@@ -109,7 +140,7 @@ const NewPost = () => {
       draggable: true,
       theme: "colored",
     });
-    
+
     // ✅ Fetch fresh posts from Supabase instead of local dispatch
     dispatch(fetchPosts());
     resetForm();

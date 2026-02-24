@@ -82,7 +82,7 @@ const EditorDashboard = () => {
                 {editorPost.map((post) => (
                   <div
                     key={post.id}
-                    className="bg-gray-200 w-full flex flex-col p-5"
+                    className={`w-full flex flex-col p-5 ${post.status === "published" ? "border-l-4 border-green-500" : "bg-gray-200"}`}
                   >
                     <hr className="bg-white" />
 
@@ -94,6 +94,11 @@ const EditorDashboard = () => {
                         >
                           {post.status}
                         </span>
+                        {/* {post.status === "published" && (
+                          <span className="text-xs text-green-700 font-semibold">
+                            (Read-only)
+                          </span>
+                        )} */}
                       </div>
                       <div className="flex justify-center items-center gap-2">
                         {post.status === "pending" ? (
@@ -137,7 +142,7 @@ const EditorDashboard = () => {
                                 navigate(`/editor/new-posts/${post.id}`, {
                                   state: { post },
                                 })
-                              }
+                              } 
                             >
                               View
                             </button>
