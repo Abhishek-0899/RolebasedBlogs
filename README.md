@@ -72,5 +72,81 @@ src/
 ├── index.css            # Global styles
 └── App.jsx              # Entry point
 
+```
+## ⚙️ Getting Started
+### Prerequisites
+
+Node.js >=16
+
+NPM or Yarn
+
+Supabase account
+
+
+## Installation
+
+```text
+git clone https://github.com/yourusername/blogify.git
+cd blogify
+npm install
+
+```
+
+### Setup Environment
+
+Create .env:
+
+```text
+VITE_SUPABASE_URL=YOUR_SUPABASE_URL
+VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+```
+
+Run
+```text
+npm run dev
+```
+
+## 📘 Usage
+
+Visit /signup to register
+
+Choose your role
+
+Login redirects automatically based on role
+
+## 🔒 Security
+
+Row Level Security enabled
+
+JWT validation via Supabase
+
+Client-side route guards
+
+Role enforcement at database level
+
+## 📈 Roadmap
+
+Cursor-based pagination
+
+Supabase storage for images
+
+Comments system
+
+Realtime updates
+
+Automated testing (Jest/RTL)
+
+CI/CD workflow integration
+
+
+## 🤝 Contributing
+
+See CONTRIBUTING.md
+ for guidelines.
+
+
+## 📫 Contact
+
+### Abhishek Kumar Pandit
 
 
