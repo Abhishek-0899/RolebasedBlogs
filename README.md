@@ -5,8 +5,27 @@
 [![Contributors](https://img.shields.io/github/contributors/yourusername/blogify)](https://github.com/yourusername/blogify/graphs/contributors)
 [![Issues](https://img.shields.io/github/issues/yourusername/blogify)](https://github.com/yourusername/blogify/issues)
 
-> A production-ready Role-Based Blog Platform built with **React** and **Supabase**, featuring secure authentication and authorization, responsive UI, debounced search, and clean architecture.
+> Blogify — Role-Based Blog Platform is a full-stack, production-minded web application built using React, Tailwind CSS, and Supabase. It demonstrates real-world engineering patterns and Role-Based Access Control (RBAC) for secure content management.
 
+The platform supports three user roles:
+
+Reader — Browse and search published posts.
+
+Author — Create, edit, and manage their own posts.
+
+Editor — Publish and moderate posts from all authors.
+
+Key features include:
+
+Authentication & Authorization — Sign up and login with Supabase Auth, profile-based roles, and role-specific routing.
+
+Debounced Search — Efficient search functionality with 500ms delay for better UX and reduced API calls.
+
+Responsive UI — Fully mobile-first, modern UI built with Tailwind CSS.
+
+Data Management — Supabase as a backend with Row Level Security (RLS) and structured database schema.
+
+Scalable Architecture — Separation of concerns with reusable components and containerized logic for maintainable code.
 ---
 
 ## 🧠 Overview
