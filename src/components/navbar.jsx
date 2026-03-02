@@ -49,13 +49,30 @@ const Navbar = () => {
   // Get role of the user
   const { role, loading } = useRole(userId);
 
-  // Logout function
+ useEffect(() => {
+  if (!loading) return;
+  const timeout = setTimeout(() => {
+    if (loading) {
+      supabase.auth.signOut();
+      navigate("/login", { replace: true });
+    }
+  }, 3000);
+  return () => clearTimeout(timeout);
+}, [loading]);
+
   const handleLogout = async () => {
-    console.log("signout")
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      alert(error.message);
-    } else {
+    setIsOpen(false);
+    try {
+      await Promise.race([
+        supabase.auth.signOut(),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("timeout")), 3000),
+        ),
+      ]);
+    } catch (err) {
+      console.warn("SignOut issue:", err.message);
+    } finally {
+      // ✅ Always redirect regardless of success or timeout
       navigate("/login", { replace: true });
     }
   };
@@ -124,7 +141,6 @@ const Navbar = () => {
         <button
           className="rounded-xl px-2 py-1 flex gap-2 items-center hover:bg-red-500"
           onClick={handleLogout}
-          cons
         >
           <GoSignOut size={20} className="text-red-700" />
           Sign Out

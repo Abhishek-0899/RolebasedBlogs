@@ -14,7 +14,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-6">
+      <div className="w-full  bg-white rounded-2xl shadow-md p-6">
         <Header />
 
         <SearchBar

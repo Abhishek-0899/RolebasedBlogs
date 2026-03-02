@@ -15,7 +15,7 @@ const NewPost = () => {
   const location = useLocation();
 
   const { user } = useAuth();
-  const { role } = useRole();
+  const { role } = useRole(user?.id);
 
   const post = location?.state?.post;
   const isPublished = post?.status === "published";
@@ -23,11 +23,16 @@ const NewPost = () => {
   const [title, setTitle] = useState(post?.title || "");
   const [excerpt, setExcerpt] = useState(post?.excerpt || "");
   const [content, setContent] = useState(post?.content || "");
+
   const isAnyfiledEmpty =
-    title.trim() !== "" || excerpt.trim() !== "" || content.trim() !== "";
+    title.trim() !== "" ||
+    excerpt.trim() !== "" ||
+    content.trim() !== "";
 
   const isAllFieldsFilled =
-    title.trim() !== "" && excerpt.trim() !== "" && content.trim() !== "";
+    title.trim() !== "" &&
+    excerpt.trim() !== "" &&
+    content.trim() !== "";
 
   useEffect(() => {
     if (post) {
@@ -37,6 +42,10 @@ const NewPost = () => {
     }
   }, [post]);
 
+  useEffect(() => {
+    dispatch(fetchPosts());
+  }, [dispatch]);
+
   const resetForm = () => {
     setTitle("");
     setExcerpt("");
@@ -45,7 +54,9 @@ const NewPost = () => {
 
   const handleSaveDraft = async () => {
     if (!user) return;
+
     let query;
+
     if (post?.id) {
       query = supabase
         .from("posts")
@@ -71,8 +82,9 @@ const NewPost = () => {
         .select()
         .single();
     }
-    const { data, error } = await query;
-    console.log("data : ", data);
+
+    const { error } = await query;
+
     if (error) {
       console.log(error);
       toast.error("Error saving draft", { theme: "colored" });
@@ -82,23 +94,23 @@ const NewPost = () => {
     toast.info("Post saved as draft!", {
       position: "top-center",
       autoClose: 2000,
-      hideProgressBar: false,
       closeOnClick: true,
       draggable: true,
       theme: "colored",
     });
 
-    // ✅ Fetch fresh posts from Supabase instead of local dispatch
     dispatch(fetchPosts());
     resetForm();
   };
 
   const handleSubmit = async () => {
     if (!user) return;
+
     const newStatus = role === "editor" ? "published" : "pending";
+
     let query;
+
     if (post?.id) {
-      // UPDATE
       query = supabase
         .from("posts")
         .update({
@@ -111,7 +123,6 @@ const NewPost = () => {
         .select()
         .single();
     } else {
-      // INSERT
       query = supabase
         .from("posts")
         .insert({
@@ -124,24 +135,23 @@ const NewPost = () => {
         .select()
         .single();
     }
-    const { data, error } = await query;
+
+    const { error } = await query;
+
     if (error) {
       console.log(error);
       toast.error("Error in submitting post", { theme: "colored" });
       return;
     }
 
-    console.log("data : ", data);
     toast.success("Post send for review!", {
       position: "top-center",
       autoClose: 2000,
-      hideProgressBar: false,
       closeOnClick: true,
       draggable: true,
       theme: "colored",
     });
 
-    // ✅ Fetch fresh posts from Supabase instead of local dispatch
     dispatch(fetchPosts());
     resetForm();
   };
@@ -162,9 +172,10 @@ const NewPost = () => {
       />
       <div className="min-h-screen bg-gray-100 overflow-x-hidden">
         <div className="max-w-3xl mx-auto space-y-6 bg-white shadow-md md:p-8 p-4 rounded-lg">
-          <h1 className="md:text-5xl text-2xl font-bold">Create New Post</h1>
+          <h1 className="md:text-5xl text-2xl font-bold">
+            Create New Post
+          </h1>
 
-          {/* Title */}
           <div className="space-y-1">
             <label className="md:font-medium md:text-2xl text-xl font-bold">
               Title
@@ -174,12 +185,13 @@ const NewPost = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               readOnly={isPublished}
-              className={`w-full h-16 px-3 py-2 border-2 rounded-lg text-base resize-none overflow-hidden ${isPublished ? "bg-gray-100 cursor-not-allowed" : ""}`}
+              className={`w-full h-16 px-3 py-2 border-2 rounded-lg text-base resize-none overflow-hidden ${
+                isPublished ? "bg-gray-100 cursor-not-allowed" : ""
+              }`}
               placeholder="Enter post title..."
             />
           </div>
 
-          {/* Excerpt */}
           <div className="space-y-1">
             <label className="md:font-medium md:text-2xl text-xl font-bold">
               Excerpt
@@ -188,12 +200,13 @@ const NewPost = () => {
               value={excerpt}
               onChange={(e) => setExcerpt(e.target.value)}
               readOnly={isPublished}
-              className={`w-full h-20 px-3 py-2 border-2 rounded-lg text-base resize-none ${isPublished ? "bg-gray-100 cursor-not-allowed" : ""}`}
+              className={`w-full h-20 px-3 py-2 border-2 rounded-lg text-base resize-none ${
+                isPublished ? "bg-gray-100 cursor-not-allowed" : ""
+              }`}
               placeholder="Brief summary of your post..."
             />
           </div>
 
-          {/* Content */}
           <div className="space-y-1">
             <label className="md:font-medium md:text-2xl text-xl font-bold">
               Content
@@ -202,10 +215,13 @@ const NewPost = () => {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               readOnly={isPublished}
-              className={`w-full min-h-[160px] px-3 py-2 border-2 rounded-lg text-base ${isPublished ? "bg-gray-100 cursor-not-allowed" : ""}`}
+              className={`w-full min-h-[160px] px-3 py-2 border-2 rounded-lg text-base ${
+                isPublished ? "bg-gray-100 cursor-not-allowed" : ""
+              }`}
               placeholder="Write your post content here..."
             />
           </div>
+
           <hr className="border-1" />
 
           {isPublished && (
@@ -218,8 +234,12 @@ const NewPost = () => {
             <button
               disabled={!isAnyfiledEmpty || isPublished}
               className={`flex items-center bg-gray-700 text-white gap-2 p-2 border rounded-xl 
-                  ${!isAnyfiledEmpty || isPublished ? "disabled:opacity-50 cursor-not-allowed" : "hover:bg-gray-900"}
-                `}
+                ${
+                  !isAnyfiledEmpty || isPublished
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-gray-900"
+                }
+              `}
               onClick={handleSaveDraft}
             >
               <span className="hidden md:inline">
@@ -227,11 +247,16 @@ const NewPost = () => {
               </span>
               Save Draft
             </button>
+
             <button
               disabled={!isAllFieldsFilled || isPublished}
               className={`flex items-center bg-gray-700 text-white gap-2 p-2 border rounded-xl 
-                    ${isAllFieldsFilled && !isPublished ? "hover:bg-gray-900" : "disabled:opacity-50 cursor-not-allowed"}
-                `}
+                ${
+                  !isAllFieldsFilled || isPublished
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-gray-900"
+                }
+              `}
               onClick={handleSubmit}
             >
               <span className="hidden md:inline">
