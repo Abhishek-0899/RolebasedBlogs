@@ -49,17 +49,6 @@ const Navbar = () => {
   // Get role of the user
   const { role, loading } = useRole(userId);
 
- useEffect(() => {
-  if (!loading) return;
-  const timeout = setTimeout(() => {
-    if (loading) {
-      supabase.auth.signOut();
-      navigate("/login", { replace: true });
-    }
-  }, 3000);
-  return () => clearTimeout(timeout);
-}, [loading]);
-
   const handleLogout = async () => {
     setIsOpen(false);
     try {

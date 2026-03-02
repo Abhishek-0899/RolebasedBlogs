@@ -5,26 +5,27 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { fetchPosts } from "../features/posts/postSlice";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useRole } from "../hooks/useRole";
 import { useAuth } from "../hooks/useAuth";
 import supabase from "../utils/supabase";
 
 const NewPost = () => {
   const dispatch = useDispatch();
-  const location = useLocation();
+  const { id } = useParams();
 
   const { user } = useAuth();
   const { role } = useRole(user?.id);
 
-  const post = location?.state?.post;
-  const isPublished = post?.status === "published";
+  const [title, setTitle] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [content, setContent] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [postStatus, setPostStatus] = useState(null);
 
-  const [title, setTitle] = useState(post?.title || "");
-  const [excerpt, setExcerpt] = useState(post?.excerpt || "");
-  const [content, setContent] = useState(post?.content || "");
+  const isPublished = postStatus === "published";
 
-  const isAnyfiledEmpty =
+  const isAnyFieldFilled =
     title.trim() !== "" ||
     excerpt.trim() !== "" ||
     content.trim() !== "";
@@ -34,50 +35,69 @@ const NewPost = () => {
     excerpt.trim() !== "" &&
     content.trim() !== "";
 
+  // 🔥 Fetch post if editing
   useEffect(() => {
-    if (post) {
-      setTitle(post.title);
-      setExcerpt(post.excerpt);
-      setContent(post.content);
-    }
-  }, [post]);
+    const fetchPost = async () => {
+      if (!id) return;
 
-  useEffect(() => {
-    dispatch(fetchPosts());
-  }, [dispatch]);
+      setLoading(true);
+
+      const { data, error } = await supabase
+        .from("posts")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.log(error);
+        toast.error("Error loading post");
+        setLoading(false);
+        return;
+      }
+
+      setTitle(data.title);
+      setExcerpt(data.excerpt);
+      setContent(data.content);
+      setPostStatus(data.status);
+
+      setLoading(false);
+    };
+
+    fetchPost();
+  }, [id]);
 
   const resetForm = () => {
     setTitle("");
     setExcerpt("");
     setContent("");
+    setPostStatus(null);
   };
 
   const handleSaveDraft = async () => {
     if (!user) return;
 
+    const payload = {
+      title,
+      excerpt,
+      content,
+      status: "draft",
+    };
+
     let query;
 
-    if (post?.id) {
+    if (id) {
       query = supabase
         .from("posts")
-        .update({
-          title,
-          excerpt,
-          content,
-          status: "draft",
-        })
-        .eq("id", post.id)
+        .update(payload)
+        .eq("id", id)
         .select()
         .single();
     } else {
       query = supabase
         .from("posts")
         .insert({
-          title,
-          excerpt,
-          content,
+          ...payload,
           created_by: user.id,
-          status: "draft",
         })
         .select()
         .single();
@@ -86,21 +106,14 @@ const NewPost = () => {
     const { error } = await query;
 
     if (error) {
-      console.log(error);
-      toast.error("Error saving draft", { theme: "colored" });
+      toast.error("Error saving draft");
       return;
     }
 
-    toast.info("Post saved as draft!", {
-      position: "top-center",
-      autoClose: 2000,
-      closeOnClick: true,
-      draggable: true,
-      theme: "colored",
-    });
+    toast.info("Post saved as draft!", { theme: "colored" });
 
     dispatch(fetchPosts());
-    resetForm();
+    if (!id) resetForm();
   };
 
   const handleSubmit = async () => {
@@ -108,29 +121,28 @@ const NewPost = () => {
 
     const newStatus = role === "editor" ? "published" : "pending";
 
+    const payload = {
+      title,
+      excerpt,
+      content,
+      status: newStatus,
+    };
+
     let query;
 
-    if (post?.id) {
+    if (id) {
       query = supabase
         .from("posts")
-        .update({
-          title,
-          excerpt,
-          content,
-          status: newStatus,
-        })
-        .eq("id", post.id)
+        .update(payload)
+        .eq("id", id)
         .select()
         .single();
     } else {
       query = supabase
         .from("posts")
         .insert({
-          title,
-          excerpt,
-          content,
+          ...payload,
           created_by: user.id,
-          status: newStatus,
         })
         .select()
         .single();
@@ -139,130 +151,110 @@ const NewPost = () => {
     const { error } = await query;
 
     if (error) {
-      console.log(error);
-      toast.error("Error in submitting post", { theme: "colored" });
+      toast.error("Error submitting post");
       return;
     }
 
-    toast.success("Post send for review!", {
-      position: "top-center",
-      autoClose: 2000,
-      closeOnClick: true,
-      draggable: true,
-      theme: "colored",
-    });
+    toast.success(
+      role === "editor"
+        ? "Post published!"
+        : "Post sent for review!",
+      { theme: "colored" }
+    );
 
     dispatch(fetchPosts());
-    resetForm();
+    if (!id) resetForm();
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Loading post...</p>
+      </div>
+    );
+  }
 
   return (
     <>
-      <ToastContainer
-        position="top-center"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        theme="colored"
-        pauseOnHover
-      />
+      <ToastContainer />
+
       <div className="min-h-screen bg-gray-100 overflow-x-hidden">
         <div className="max-w-3xl mx-auto space-y-6 bg-white shadow-md md:p-8 p-4 rounded-lg">
           <h1 className="md:text-5xl text-2xl font-bold">
-            Create New Post
+            {id ? "Edit Post" : "Create New Post"}
           </h1>
 
-          <div className="space-y-1">
-            <label className="md:font-medium md:text-2xl text-xl font-bold">
-              Title
-            </label>
+          <div>
+            <label className="font-bold text-xl">Title</label>
             <textarea
               rows={1}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               readOnly={isPublished}
-              className={`w-full h-16 px-3 py-2 border-2 rounded-lg text-base resize-none overflow-hidden ${
+              className={`w-full h-16 px-3 py-2 border-2 rounded-lg resize-none ${
                 isPublished ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
               placeholder="Enter post title..."
             />
           </div>
 
-          <div className="space-y-1">
-            <label className="md:font-medium md:text-2xl text-xl font-bold">
-              Excerpt
-            </label>
+          <div>
+            <label className="font-bold text-xl">Excerpt</label>
             <textarea
               value={excerpt}
               onChange={(e) => setExcerpt(e.target.value)}
               readOnly={isPublished}
-              className={`w-full h-20 px-3 py-2 border-2 rounded-lg text-base resize-none ${
+              className={`w-full h-20 px-3 py-2 border-2 rounded-lg ${
                 isPublished ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
-              placeholder="Brief summary of your post..."
+              placeholder="Brief summary..."
             />
           </div>
 
-          <div className="space-y-1">
-            <label className="md:font-medium md:text-2xl text-xl font-bold">
-              Content
-            </label>
+          <div>
+            <label className="font-bold text-xl">Content</label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               readOnly={isPublished}
-              className={`w-full min-h-[160px] px-3 py-2 border-2 rounded-lg text-base ${
+              className={`w-full min-h-[160px] px-3 py-2 border-2 rounded-lg ${
                 isPublished ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
-              placeholder="Write your post content here..."
+              placeholder="Write your content..."
             />
           </div>
 
-          <hr className="border-1" />
-
           {isPublished && (
             <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-              ✓ This post has been published and is now read-only.
+              ✓ This post is published and read-only.
             </div>
           )}
 
-          <div className="md:flex gap-4 flex">
+          <div className="flex gap-4">
             <button
-              disabled={!isAnyfiledEmpty || isPublished}
-              className={`flex items-center bg-gray-700 text-white gap-2 p-2 border rounded-xl 
-                ${
-                  !isAnyfiledEmpty || isPublished
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-gray-900"
-                }
-              `}
+              disabled={!isAnyFieldFilled || isPublished}
               onClick={handleSaveDraft}
+              className={`flex items-center gap-2 bg-gray-700 text-white p-2 rounded-xl ${
+                !isAnyFieldFilled || isPublished
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-gray-900"
+              }`}
             >
-              <span className="hidden md:inline">
-                <TfiSave />
-              </span>
+              <TfiSave />
               Save Draft
             </button>
 
             <button
               disabled={!isAllFieldsFilled || isPublished}
-              className={`flex items-center bg-gray-700 text-white gap-2 p-2 border rounded-xl 
-                ${
-                  !isAllFieldsFilled || isPublished
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-gray-900"
-                }
-              `}
               onClick={handleSubmit}
+              className={`flex items-center gap-2 bg-gray-700 text-white p-2 rounded-xl ${
+                !isAllFieldsFilled || isPublished
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-gray-900"
+              }`}
             >
-              <span className="hidden md:inline">
-                <CiLocationArrow1 />
-              </span>
-              Submit for review
+              <CiLocationArrow1 />
+              Submit
             </button>
           </div>
         </div>
