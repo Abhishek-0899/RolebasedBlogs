@@ -11,7 +11,11 @@ export const fetchPosts = createAsyncThunk(
       const { data, error } = await supabase
         .from("posts")
         .select("*")
+<<<<<<< HEAD
         .order("created_at", { ascending: true });
+=======
+        .order("created_at", { ascending: false });
+>>>>>>> ffc307888555136bed54d74d85e623bcbb3381a1
 
       if (error) throw error;
       return data || [];

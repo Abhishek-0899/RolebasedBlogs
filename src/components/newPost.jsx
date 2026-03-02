@@ -160,13 +160,15 @@ const NewPost = () => {
         theme="colored"
         pauseOnHover
       />
-      <div className="min-h-screen bg-gray-100 ">
-        <div className="max-w-3xl mx-auto space-y-6 bg-white bg-shadow-md p-8 rounded-lg">
-          <h1 className="text-3xl font-bold">Create New Post</h1>
+      <div className="min-h-screen bg-gray-100 overflow-x-hidden">
+        <div className="max-w-3xl mx-auto space-y-6 bg-white shadow-md md:p-8 p-4 rounded-lg">
+          <h1 className="md:text-5xl text-2xl font-bold">Create New Post</h1>
 
           {/* Title */}
           <div className="space-y-1">
-            <label className="font-medium">Title</label>
+            <label className="md:font-medium md:text-2xl text-xl font-bold">
+              Title
+            </label>
             <textarea
               rows={1}
               value={title}
@@ -179,7 +181,9 @@ const NewPost = () => {
 
           {/* Excerpt */}
           <div className="space-y-1">
-            <label className="font-medium">Excerpt</label>
+            <label className="md:font-medium md:text-2xl text-xl font-bold">
+              Excerpt
+            </label>
             <textarea
               value={excerpt}
               onChange={(e) => setExcerpt(e.target.value)}
@@ -191,7 +195,9 @@ const NewPost = () => {
 
           {/* Content */}
           <div className="space-y-1">
-            <label className="font-medium">Content</label>
+            <label className="md:font-medium md:text-2xl text-xl font-bold">
+              Content
+            </label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -208,7 +214,7 @@ const NewPost = () => {
             </div>
           )}
 
-          <div className="flex gap-4">
+          <div className="md:flex gap-4 flex">
             <button
               disabled={!isAnyfiledEmpty || isPublished}
               className={`flex items-center bg-gray-700 text-white gap-2 p-2 border rounded-xl 
@@ -216,7 +222,9 @@ const NewPost = () => {
                 `}
               onClick={handleSaveDraft}
             >
-              <TfiSave />
+              <span className="hidden md:inline">
+                <TfiSave />
+              </span>
               Save Draft
             </button>
             <button
@@ -226,7 +234,9 @@ const NewPost = () => {
                 `}
               onClick={handleSubmit}
             >
-              <CiLocationArrow1 />
+              <span className="hidden md:inline">
+                <CiLocationArrow1 />
+              </span>
               Submit for review
             </button>
           </div>

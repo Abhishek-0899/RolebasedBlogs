@@ -15,7 +15,7 @@ const Post = ({ todayDate }) => {
   }
 
   const role = user.role; // author/editor
-  console.log(role);
+  // console.log(role);
 
   // Filter posts based on role
   let filteredPosts = posts;

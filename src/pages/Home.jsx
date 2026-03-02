@@ -1,8 +1,3 @@
-import { BsSearch } from "react-icons/bs";
-import { AiFillAmazonCircle } from "react-icons/ai";
-import { AiOutlineHeart } from "react-icons/ai";
-import { FaRegComment } from "react-icons/fa";
-
 import Header from "../components/Header";
 import Post from "../components/Post";
 import SearchBar from "../components/SeachInput";
@@ -18,27 +13,23 @@ const Home = () => {
   const todayDate = new Date().toLocaleDateString("en-US");
 
   return (
-    <>
-      {/* <div className="p-10 mx-auto w-1/2"> */}
-    <div className="px-[15rem] pt-10">
-        {" "}
-        <div>
-          <Header />
-          <SearchBar
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <Post
-            todayDate={todayDate}
-            likes={likes}
-            comments={comments}
-            id={id}
-          />
+    <div className="min-h-screen bg-gray-100 flex justify-center px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-6">
+        <Header />
 
-          <br />
-        </div>
+        <SearchBar
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+        <Post
+          todayDate={todayDate}
+          likes={likes}
+          comments={comments}
+          id={id}
+        />
       </div>
-    </>
+    </div>
   );
 };
 

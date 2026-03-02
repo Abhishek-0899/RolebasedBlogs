@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import img1 from "../assets/blog.png";
 import "../index.css";
 import { useNavigate } from "react-router-dom";
@@ -10,10 +10,24 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [loading, setloading] = useState(false);
   const [role, setRole] = useState("reader");
+  const [open, setOpen] = useState(false);
 
   const roles = ["reader", "author", "editor"];
 
   const navigate = useNavigate();
+
+  const dropdownRef = useRef(null);
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -50,7 +64,6 @@ const SignIn = () => {
       setloading(false);
       return;
     }
-
     const userId = data.user?.id;
 
     console.log("🔥 START INSERT:", { userId, name, role: role.toLowerCase() });
@@ -61,8 +74,10 @@ const SignIn = () => {
       .insert({
         id: user.id,
         role: role.toLowerCase(),
+        name: name,
+        email : user.email
       })
-      .select();
+      .maybeSingle();
 
     if (profileError) {
       console.error("💥 FULL ERROR:", profileError);
@@ -91,7 +106,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="w-full min-h-screen flex items-center justify-center bg-blue-200 overflow-hidden">
+    <div className="w-full min-h-screen flex items-center justify-center bg-blue-200 p-5">
       <div className="bg-white rounded-lg p-8 shadow-xl max-w-md w-full text-center">
         <img
           src={img1}
@@ -104,7 +119,7 @@ const SignIn = () => {
           Join our blog platform today
         </p>
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSignUp}>
           <div className="text-left">
             <label className="block text-gray-600 text-sm mb-1">
               Full Name
@@ -141,26 +156,47 @@ const SignIn = () => {
           </div>
 
           {/* Role select */}
-          <select
-            className="w-full px-4 py-2 border rounded-lg bg-white focus:outline-none focus:ring-2"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-          >
-            {roles.map((item) => (
-              <option
-                className="text-blue-900 rounded-lg w-full font-extrabold"
-                key={item}
-                value={item}
+          <div className="relative text-left" ref={dropdownRef}>
+            <label className="block text-gray-600 text-sm mb-1">
+              Select Role
+            </label>
+
+            <button
+              type="button"
+              onClick={() => setOpen(!open)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-left"
+            >
+              <div className="flex justify-between">
+                <span className="capitalize">{role}</span>
+              <span
+                className={`transition-transform ${open ? "rotate-180" : ""}`}
               >
-                {item}
-              </option>
-            ))}
-          </select>
+                ▼
+              </span>
+              </div>
+            </button>
+
+            {open && (
+              <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+                {roles.map((item) => (
+                  <div
+                    key={item}
+                    onClick={() => {
+                      setRole(item);
+                      setOpen(false);
+                    }}
+                    className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           <button
             type="submit"
             disabled={loading}
-            onClick={handleSignUp}
             className="bg-blue-600 w-full text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition hover:scale-105 active:scale-95 duration-200 ease-in-out"
           >
             {loading ? "Create an Account...." : "Create an Account"}
@@ -169,6 +205,7 @@ const SignIn = () => {
           <p className="text-sm">
             Already have an account?{" "}
             <button
+            type="button"
               onClick={() => navigate("/login")}
               className="text-blue-500 cursor-pointer hover:underline hover:scale-105 active:scale-95 transition duration-200 ease-in-out"
             >

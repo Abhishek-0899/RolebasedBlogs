@@ -6,6 +6,7 @@ import {
 } from "react-icons/hi";
 export const getDashboardStats = ({ role, data }) => {
   // switch (role) {
+  if (!data || Object.keys(data).length === 0) return []
   if (role === "author") // case "author":
   {
     return [
