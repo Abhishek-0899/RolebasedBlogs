@@ -1,9 +1,9 @@
-import { AiFillLike, AiOutlineLike } from "react-icons/ai";
+import { AiFillLike, AiOutlineLike, AiOutlineHeart } from "react-icons/ai";
 import { BiLeftArrowAlt } from "react-icons/bi";
-import React, { useEffect, useState } from "react";
-import { replace, useNavigate, useParams } from "react-router-dom";
-import { AiFillAmazonCircle, AiOutlineHeart } from "react-icons/ai";
+import { AiFillAmazonCircle } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import supabase from "../utils/supabase";
 
@@ -29,6 +29,7 @@ const PostID = () => {
       const { data, error } = await supabase
         .from("posts")
         .select("*, profiles(name)")
+        .eq("id", id)
         .single();
 
       if (!error && data) {
@@ -42,13 +43,13 @@ const PostID = () => {
     if (id) fetchPost();
   }, [id]);
 
-  /* ================= LIKE ================= */
+  /* ================= MAIN POST LIKE ================= */
   const handleLike = () => {
     setCountLike((prev) => (liked ? prev - 1 : prev + 1));
     setLiked(!liked);
   };
 
-  /* ================= COMMENT ================= */
+  /* ================= ADD COMMENT ================= */
   const handleComment = () => {
     if (!commentText.trim()) return;
 
@@ -63,6 +64,7 @@ const PostID = () => {
         replyText: "",
       },
     ]);
+
     setCommentText("");
   };
 
@@ -98,44 +100,45 @@ const PostID = () => {
 
       <div className="min-h-screen flex justify-center px-4 py-10">
         <div className="w-full max-w-3xl space-y-6">
-          {/* POST CARD */}
+          {/* ================= POST CARD ================= */}
           <div className="p-6 bg-yellow-200 rounded-xl shadow">
-            <h1 className="font-bold text-3xl mb-3 break break-words">
-              {post.content}
-            </h1>
+            <div className="bg-yellow-200 rounded-xl shadow p-6 mb-4">
+              <h1 className="text-3xl font-bold mb-2 break-words">
+                {post.title}
+              </h1>
 
-            <div className="flex items-center gap-2 mb-4">
-              <AiFillAmazonCircle />
-              <p className="text-sm text-gray-700">
-                By {post?.profiles?.name || "Unknown"}
-              </p>
-            </div>
+              <p className="text-gray-700 italic mb-4">{post.excerpt}</p>
 
-            <div className="flex gap-4 flex-wrap">
-              <div className="flex justify-center items-center gap-1">
-                <p
-                  onClick={handleLike}
-                  className={`flex justify-center items-center gap-2
-              p-2 rounded-lg
-              transition-colors durations-200 
-              ${liked ? "bg-red-200" : "bg-gray-200"}`}
-                >
-                  {liked ? "❤️" : <AiOutlineHeart />}
-
-                  <span>{countLike}</span>
-                </p>
+              <div className="text-gray-800 leading-relaxed whitespace-pre-line mb-4">
+                {post.content}
               </div>
 
-              <div className="flex justify-center items-center gap-1">
-                <p className="border-2 bg-gray-100 rounded-full p-2">
+              <div className="flex items-center gap-2 text-sm text-gray-700">
+                <AiFillAmazonCircle />
+                <p>By {post?.profiles?.name || "Unknown"}</p>
+              </div>
+            </div>
+            
+            <div className="flex gap-4 flex-wrap">
+              <div
+                onClick={handleLike}
+                className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition
+                ${liked ? "bg-red-200" : "bg-gray-200"}`}
+              >
+                {liked ? "❤️" : <AiOutlineHeart />}
+                <span>{countLike}</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <div className="border bg-gray-100 rounded-full p-2">
                   <FaRegComment />
-                </p>
-                <p>{comments.length}</p>
+                </div>
+                <span>{comments.length}</span>
               </div>
             </div>
           </div>
 
-          {/* COMMENTS */}
+          {/* ================= COMMENTS SECTION ================= */}
           <div className="p-4 bg-gray-200 rounded-xl shadow">
             <h2 className="mb-3 font-semibold">Comments ({comments.length})</h2>
 
@@ -160,33 +163,23 @@ const PostID = () => {
               </p>
             )}
 
-            <div className="mt-6 space-y-3">
+            <div className="mt-6 space-y-4">
               {comments.map((comment, index) => (
-                <div key={index} className="flex gap-3 items-center">
-                  {/* Avatar circle */}
-                  <div
-                    className="w-9 h-9 rounded-full bg-gray-300 flex items-center
- justify-center text-sm font-semibold"
-                  >
+                <div key={index} className="flex gap-3 items-start">
+                  {/* Avatar */}
+                  <div className="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold">
                     U
                   </div>
 
-                  {/* Comment Section */}
-                  <div className="flex-1 min-w-0">
-                    {/* comment Bubble */}
-                    <div className="bg-gray-100 rounded-2xl px-4 py-2 shadow">
-                      {/* <p className="text-sm font-semibold">user</p> */}
-                      <p
-                        className="
-                      font-sm break-words 
-                      "
-                      >
-                        {comment.text}
-                      </p>
+                  <div className="flex-1">
+                    {/* Comment Bubble */}
+                    <div className="bg-gray-100 rounded-2xl px-4 py-2 shadow break-words">
+                      <p className="text-sm">{comment.text}</p>
                     </div>
 
-                    {/* Action Row */}
+                    {/* Comment Actions */}
                     <div className="flex items-center gap-6 text-sm text-gray-500 mt-1 ml-2">
+                      {/* Like Comment */}
                       <button
                         onClick={() => {
                           setComments((prev) =>
@@ -208,7 +201,7 @@ const PostID = () => {
                         {comment.liked ? (
                           <>
                             <AiFillLike className="text-blue-600" />
-                            <span className="text-blue-600 font-medium">
+                            <span className="text-blue-600">
                               {comment.countLike}
                             </span>
                           </>
@@ -221,9 +214,7 @@ const PostID = () => {
                       </button>
 
                       {/* Reply Toggle */}
-
                       <button
-                        className="hover:text-blue-600 transition"
                         onClick={() => {
                           setComments((prev) =>
                             prev.map((c, i) =>
@@ -233,77 +224,77 @@ const PostID = () => {
                             ),
                           );
                         }}
+                        className="hover:text-blue-600 transition"
                       >
                         Reply
                       </button>
 
-                      <span>Just Now</span>
-
-                      {/* Reply Box */}
-
-                      {comment.showReplyBox && (
-                        <div className="mt-3 ml-6">
-                          <textarea
-                            value={comment.replyText}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              setComments((prev) =>
-                                prev.map((c, i) =>
-                                  i === index ? { ...c, replyText: value } : c,
-                                ),
-                              );
-                            }}
-                            className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-400"
-                            placeholder="Write a reply..."
-                            rows={2}
-                          />
-
-                          <button
-                            onClick={() => {
-                              if (!comment.replyText.trim()) return;
-
-                              setComments((prev) =>
-                                prev.map((c, i) => {
-                                  if (i === index) {
-                                    return {
-                                      ...c,
-                                      replies: [
-                                        ...c.replies,
-                                        {
-                                          text: c.replyText,
-                                        },
-                                      ],
-                                      replyText: "",
-                                      showReplyBox: false,
-                                    };
-                                  }
-                                  return c;
-                                }),
-                              );
-                            }}
-                            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-                          >
-                            Post reply
-                          </button>
-                        </div>
-                      )}
-
-                      {/* Replies */}
-                      {comment.replies.map((reply, rIndex) => (
-                        <div
-                          key={rIndex}
-                          className="flex gap-3 items-start mt-3 ml-8"
-                        >
-                          <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-semibold">
-                            U
-                          </div>
-
-                          <div className="bg-gray-100 rounded-2xl px-4 py-2 shadow break-words flex-1">
-                            <p className="text-sm">{reply.text}</p>
-                          </div>
-                        </div>
-                      ))}
+                      <span>Just now</span>
                     </div>
+
+                    {/* Reply Box */}
+                    {comment.showReplyBox && (
+                      <div className="mt-3 ml-6">
+                        <textarea
+                          value={comment.replyText}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setComments((prev) =>
+                              prev.map((c, i) =>
+                                i === index ? { ...c, replyText: value } : c,
+                              ),
+                            );
+                          }}
+                          className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-400"
+                          placeholder="Write a reply..."
+                          rows={2}
+                        />
+
+                        <button
+                          onClick={() => {
+                            if (!comment.replyText.trim()) return;
+
+                            setComments((prev) =>
+                              prev.map((c, i) => {
+                                if (i === index) {
+                                  return {
+                                    ...c,
+                                    replies: [
+                                      ...c.replies,
+                                      {
+                                        text: c.replyText,
+                                      },
+                                    ],
+                                    replyText: "",
+                                    showReplyBox: false,
+                                  };
+                                }
+                                return c;
+                              }),
+                            );
+                          }}
+                          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                        >
+                          Post Reply
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Replies */}
+                    {comment.replies.map((reply, rIndex) => (
+                      <div
+                        key={rIndex}
+                        className="flex gap-3 items-start mt-2 ml-12"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-semibold">
+                          U
+                        </div>
+
+                        <div className="bg-gray-100 rounded-2xl px-3 py-1.5 shadow break-words flex-1 max-w-[85%]">
+                          <p className="text-sm">{reply.text}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))}
