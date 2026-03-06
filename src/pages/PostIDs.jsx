@@ -1,7 +1,7 @@
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { BiLeftArrowAlt } from "react-icons/bi";
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { replace, useNavigate, useParams } from "react-router-dom";
 import { AiFillAmazonCircle, AiOutlineHeart } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa";
 import { useAuth } from "../hooks/useAuth";
@@ -29,7 +29,6 @@ const PostID = () => {
       const { data, error } = await supabase
         .from("posts")
         .select("*, profiles(name)")
-        .eq("id", id)
         .single();
 
       if (!error && data) {
@@ -61,14 +60,12 @@ const PostID = () => {
         countLike: 0,
         replies: [],
         showReplyBox: false,
+        replyText: "",
       },
     ]);
     setCommentText("");
   };
 
-
-
-  
   const DASHBOARD_ROUTES = {
     editor: "/editor/dashboard",
     author: "/author/dashboard",
@@ -222,10 +219,90 @@ const PostID = () => {
                           </>
                         )}
                       </button>
-                      <button className="hover:text-blue-600 transition">
+
+                      {/* Reply Toggle */}
+
+                      <button
+                        className="hover:text-blue-600 transition"
+                        onClick={() => {
+                          setComments((prev) =>
+                            prev.map((c, i) =>
+                              i === index
+                                ? { ...c, showReplyBox: !c.showReplyBox }
+                                : c,
+                            ),
+                          );
+                        }}
+                      >
                         Reply
                       </button>
-                      <button>Just now</button>
+
+                      <span>Just Now</span>
+
+                      {/* Reply Box */}
+
+                      {comment.showReplyBox && (
+                        <div className="mt-3 ml-6">
+                          <textarea
+                            value={comment.replyText}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              setComments((prev) =>
+                                prev.map((c, i) =>
+                                  i === index ? { ...c, replyText: value } : c,
+                                ),
+                              );
+                            }}
+                            className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-400"
+                            placeholder="Write a reply..."
+                            rows={2}
+                          />
+
+                          <button
+                            onClick={() => {
+                              if (!comment.replyText.trim()) return;
+
+                              setComments((prev) =>
+                                prev.map((c, i) => {
+                                  if (i === index) {
+                                    return {
+                                      ...c,
+                                      replies: [
+                                        ...c.replies,
+                                        {
+                                          text: c.replyText,
+                                        },
+                                      ],
+                                      replyText: "",
+                                      showReplyBox: false,
+                                    };
+                                  }
+                                  return c;
+                                }),
+                              );
+                            }}
+                            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                          >
+                            Post reply
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Replies */}
+                      {comment.replies.map((reply, rIndex) => (
+                        <div
+                          key={rIndex}
+                          className="flex gap-3 items-start mt-3 ml-8"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-semibold">
+                            U
+                          </div>
+
+                          <div className="bg-gray-100 rounded-2xl px-4 py-2 shadow break-words flex-1">
+                            <p className="text-sm">{reply.text}</p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
