@@ -4,11 +4,11 @@ import { FaRegComment } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
-const Post = ({ todayDate,comments,title,id,likes }) => {
+const Post = ({ todayDate, comments, title, id, likes }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-
-  if (!user) return <p className="p-4 text-center">Loading...</p>;
+  // debugger;
+  // if (!user) return <p className="p-4 text-center">Loading...</p>;
 
   return (
     <div
@@ -41,4 +41,3 @@ const Post = ({ todayDate,comments,title,id,likes }) => {
 };
 
 export default Post;
-

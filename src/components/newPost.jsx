@@ -4,7 +4,7 @@ import { TfiSave } from "react-icons/tfi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
-import { fetchPosts } from "../features/posts/postSlice";
+import { fetchPosts, publishPost } from "../features/posts/postSlice";
 import { useParams } from "react-router-dom";
 import { useRole } from "../hooks/useRole";
 import { useAuth } from "../hooks/useAuth";
@@ -73,6 +73,9 @@ const NewPost = () => {
     setPostStatus(null);
   };
 
+  // =========================
+  // Save Draft
+  // =========================
   const handleSaveDraft = async () => {
     if (!user) return;
 
@@ -116,16 +119,17 @@ const NewPost = () => {
     if (!id) resetForm();
   };
 
+  // =========================
+  // Submit Post → Always pending
+  // =========================
   const handleSubmit = async () => {
     if (!user) return;
-
-    const newStatus = role === "editor" ? "published" : "pending";
 
     const payload = {
       title,
       excerpt,
       content,
-      status: newStatus,
+      // status omitted → DB default 'pending' will be used
     };
 
     let query;
@@ -155,15 +159,26 @@ const NewPost = () => {
       return;
     }
 
-    toast.success(
-      role === "editor"
-        ? "Post published!"
-        : "Post sent for review!",
-      { theme: "colored" }
-    );
+    toast.success("Post submitted for review!", { theme: "colored" });
 
     dispatch(fetchPosts());
     if (!id) resetForm();
+  };
+
+  // =========================
+  // Approve / Publish Post → Editors only
+  // =========================
+  const handlePublish = async () => {
+    if (!user || role !== "editor" || !id) return;
+
+    try {
+      await dispatch(publishPost(id)).unwrap();
+      toast.success("Post published!", { theme: "colored" });
+      setPostStatus("published");
+      dispatch(fetchPosts());
+    } catch (err) {
+      toast.error("Error publishing post");
+    }
   };
 
   if (loading) {
@@ -254,8 +269,18 @@ const NewPost = () => {
               }`}
             >
               <CiLocationArrow1 />
-              Submit
+              Submit for Review
             </button>
+
+            {role === "editor" && postStatus !== "published" && id && (
+              <button
+                onClick={handlePublish}
+                className="flex items-center gap-2 bg-green-600 text-white p-2 rounded-xl hover:bg-green-700"
+              >
+                <CiLocationArrow1 />
+                Publish
+              </button>
+            )}
           </div>
         </div>
       </div>
