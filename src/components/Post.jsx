@@ -10,10 +10,20 @@ const Post = ({ todayDate, comments, title, id, likes }) => {
   // debugger;
   // if (!user) return <p className="p-4 text-center">Loading...</p>;
 
+  const handleOpenPost = () => {
+    if (!user) return;
+    if (user.role === "author") {
+      navigate(`author/posts/${id}`);
+    } else if (user.role === "editor") {
+      navigate(`editor/posts/${id}`);
+    } else {
+      navigate(`/posts/${id}`);
+    }
+  };
   return (
     <div
       className="bg-gray-200 flex flex-col p-4 shadow rounded-md cursor-pointer hover:shadow-lg transition"
-      onClick={() => navigate(`/${user.role}/posts/${id}`)}
+      onClick={() => handleOpenPost()}
     >
       <div className="flex items-center gap-2">
         <AiFillAmazonCircle />

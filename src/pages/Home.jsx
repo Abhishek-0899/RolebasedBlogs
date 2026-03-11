@@ -1,33 +1,55 @@
 import Header from "../components/Header";
 import Post from "../components/Post";
 import SearchBar from "../components/SeachInput";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import supabase from "../utils/supabase";
 
 const Home = () => {
-  const { id } = useParams();
   const [search, setSearch] = useState("");
-  const [likes, setlikes] = useState(0);
-  const [comments, setComments] = useState(0);
+  const [posts, setPosts] = useState([]);
 
-  const todayDate = new Date().toLocaleDateString("en-US");
-
+  const fetchPublishedPosts = async () => {
+    const { data, error } = await supabase
+      .from("posts")
+      .select("*")
+      .eq("status", "published")
+      .order("created_at", { ascending: false });
+    if (error) {
+      console.error(error);
+      return;
+    }
+    setPosts(data);
+  };
+  useEffect(() => {
+    fetchPublishedPosts();
+  }, []);
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center px-4">
       <div className="w-full  bg-white rounded-2xl shadow-md p-6">
         <Header />
 
-        <SearchBar
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <SearchBar value={search} onChange={(e) => setSearch(e.target.value)} />
 
-        <Post
-          todayDate={todayDate}
-          likes={likes}
-          comments={comments}
-          id={id}
-        />
+        <div className="grid gap-4 mt-4">
+          {posts.length === 0 ? (
+            <p className="text-center text-gray-400">No published post</p>
+          ) : (
+            posts
+              .filter((post) =>
+                post.title.toLowerCase().includes(search.toLowerCase()),
+              )
+              .map((post) => (
+                <Post
+                  key={post.id}
+                  id={post.id}
+                  title={post.title}
+                  comments={post.comments}
+                  likes={post.likes}
+                  todayDate={new Date(post.created_at).toLocaleDateString()}
+                />
+              ))
+          )}
+        </div>
       </div>
     </div>
   );
