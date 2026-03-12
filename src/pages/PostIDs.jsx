@@ -91,25 +91,30 @@ const PostID = () => {
 
   /* ================= COMMENT LIKE ================= */
 
-  const handleCommentLike = async (comment) => {
-    const newLikes = comment.liked ? comment.likes - 1 : comment.likes + 1;
+const handleCommentLike = async (comment) => {
 
-    const { error } = await supabase
-      .from("comments")
-      .update({ likes: newLikes })
-      .eq("id", comment.id);
+  const newLikes = (comment.likes || 0) + 1;
 
-    if (error) {
-      console.log("LIKE ERROR:", error);
-      return;
-    }
+  const { data, error } = await supabase
+    .from("comments")
+    .update({ likes: newLikes })
+    .eq("id", comment.id)
+    .select()
+    .single();
 
-    setComments((prev) =>
-      prev.map((c) =>
-        c.id === comment.id ? { ...c, likes: newLikes, liked: !c.liked } : c,
-      ),
-    );
-  };
+  if (error) {
+    console.log("LIKE ERROR:", error);
+    return;
+  }
+
+  setComments((prev) =>
+    prev.map((c) =>
+      c.id === comment.id
+        ? { ...c, likes: data.likes }
+        : c
+    )
+  );
+};
   /* ================= ADD COMMENT ================= */
 
   const handleComment = async () => {
