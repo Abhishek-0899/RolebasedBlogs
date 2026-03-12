@@ -54,14 +54,20 @@ const PostID = () => {
         .eq("post_id", id)
         .order("created_at", { ascending: true });
 
-      const { data: replyData } = await supabase.from("replies").select("*");
+      const { data: replyData } = await supabase
+        .from("replies")
+        .select("*")
+        .in(
+          "comment_id",
+          commentData.map((c) => c.id),
+        );
 
       if (!error && commentData) {
         const safeComment = commentData.map((c) => ({
           ...c,
           replies: (replyData || []).filter((r) => r.comment_id === c.id),
           liked: false,
-          countLike: c.likes || 0,
+          likes: c.likes || 0,
           showReplyBox: false,
           replyText: "",
         }));
@@ -86,25 +92,24 @@ const PostID = () => {
   /* ================= COMMENT LIKE ================= */
 
   const handleCommentLike = async (comment) => {
-  const newLikes = (comment.likes || 0) + 1;
+    const newLikes = comment.liked ? comment.likes - 1 : comment.likes + 1;
 
-  const { error } = await supabase
-    .from("comments")
-    .update({ likes: newLikes })
-    .eq("id", comment.id);
+    const { error } = await supabase
+      .from("comments")
+      .update({ likes: newLikes })
+      .eq("id", comment.id);
 
-  if (error) {
-    console.log("LIKE ERROR:", error);
-    return;
-  }
+    if (error) {
+      console.log("LIKE ERROR:", error);
+      return;
+    }
 
-  setComments((prev) =>
-    prev.map((c) =>
-      c.id === comment.id ? { ...c, likes: newLikes } : c
-    )
-  );
-};
-
+    setComments((prev) =>
+      prev.map((c) =>
+        c.id === comment.id ? { ...c, likes: newLikes, liked: !c.liked } : c,
+      ),
+    );
+  };
   /* ================= ADD COMMENT ================= */
 
   const handleComment = async () => {
@@ -230,7 +235,7 @@ const PostID = () => {
                 ${liked ? "bg-red-200" : "bg-gray-200"}`}
               >
                 {liked ? "❤️" : <AiOutlineHeart />}
-               <span>{countLike}</span>
+                <span>{countLike}</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -264,7 +269,7 @@ const PostID = () => {
 
             <div className="mt-6 space-y-4">
               {(comments || []).map((comment, index) => (
-                <div key={index} className="flex gap-3 items-start">
+                <div key={comment.id} className="flex gap-3 items-start">
                   <div className="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold">
                     U
                   </div>
@@ -276,9 +281,7 @@ const PostID = () => {
 
                     <div className="flex items-center gap-6 text-sm text-gray-500 mt-1 ml-2">
                       <button
-                        onClick={() =>
-                          handleCommentLike(comment)
-                        }
+                        onClick={() => handleCommentLike(comment)}
                         className="flex items-center gap-1 hover:text-blue-600 transition"
                       >
                         {comment.liked ? (
