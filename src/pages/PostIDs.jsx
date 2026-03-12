@@ -68,13 +68,23 @@ const PostID = () => {
     setCommentText("");
   };
 
-  const DASHBOARD_ROUTES = {
-    editor: "/editor/dashboard",
-    author: "/author/dashboard",
-    reader: "/",
-  };
+  // const DASHBOARD_ROUTES = {
+  //   editor: "/editor/dashboard",
+  //   author: "/author/dashboard",
+  //   reader: "/",
+  // };
 
-  const getDashboardRoute = (role) => DASHBOARD_ROUTES[role] || "/";
+  // const getDashboardRoute = (role) => DASHBOARD_ROUTES[role] || "/";
+
+  const goToPostPage = (role) => {
+    if (role === "author") {
+      navigate(`/author/${id}`);
+    } else if (role === "editor") {
+      navigate(`/editor/${id}`);
+    } else {
+      navigate("/");
+    }
+  };
 
   if (loading) {
     return (
@@ -91,11 +101,12 @@ const PostID = () => {
   return (
     <div className="p-10">
       <button
-        onClick={() => navigate(getDashboardRoute(user?.role))}
+        // onClick={() => navigate(getDashboardRoute(user?.role))}
+        onClick={() => goToPostPage()}
         className="mb-7 flex items-center text-blue-900 font-semibold hover:text-blue-400 transition"
       >
         <BiLeftArrowAlt className="mr-1" />
-        Back to home page
+        Back to post page
       </button>
 
       <div className="min-h-screen flex justify-center px-4 py-10">
@@ -118,7 +129,7 @@ const PostID = () => {
                 <p>By {post?.profiles?.name || "Unknown"}</p>
               </div>
             </div>
-            
+
             <div className="flex gap-4 flex-wrap">
               <div
                 onClick={handleLike}
