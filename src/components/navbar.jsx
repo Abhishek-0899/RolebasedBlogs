@@ -4,6 +4,8 @@ import img1 from "../assets/blog.png";
 import supabase from "../utils/supabase";
 import { useNavigate } from "react-router-dom";
 import { useRole } from "../hooks/useRole";
+import dark from "../assets/dark.png";
+import light from "../assets/light.png";
 
 const NAV_ITEMS = {
   reader: [{ label: "Dashboard", path: "/" }],
@@ -24,6 +26,24 @@ const Navbar = () => {
   const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+
+  const [mode, setMode] = useState("light");
+
+  const toggleMode = () => {
+    const newMode = mode === "light" ? "dark" : "light";
+    setMode(newMode);
+
+    if (newMode === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  };
+
+  const modes = [
+    { type: "light", icon: light, alt: "light-mode" },
+    { type: "dark", icon: dark, alt: "dark-mode" },
+  ];
 
   // ✅ CHANGE 1 (start as true)
   const [loadingSession, setLoadingSession] = useState(true);
@@ -56,9 +76,6 @@ const Navbar = () => {
 
   const { role, loading } = useRole(userId || undefined);
   const navItems = NAV_ITEMS[role ?? "reader"];
-  console.log(NAV_ITEMS);
-  // debugger;
-  console.log("userId:", userId, "role:", role, "loading:", loading);
 
   const handleLogout = async () => {
     try {
@@ -86,7 +103,7 @@ const Navbar = () => {
   if (loadingSession || loading) return null;
 
   return (
-    <div className="relative flex justify-between items-center p-2 w-full bg-gray-200 top-0 z-50">
+    <div className="relative flex justify-between items-center p-2 w-full bg-gray-200 dark:bg-gray-900 dark:text-white top-0 z-50">
       <div
         className="flex ml-5 items-center gap-2 cursor-pointer"
         onClick={dashboardNavigate}
@@ -95,6 +112,11 @@ const Navbar = () => {
         <h1 className="font-bold text-lg">BlobHib</h1>
       </div>
 
+      {/* <button className=" md:hidden rounded-md px-5" onClick={toggleMode}>
+          <div className="flex items-center">
+            <img className="w-5" src={mode === "light" ? dark : light} />
+          </div>
+        </button> */}
       <button
         className="md:hidden text-2xl mr-4"
         onClick={() => setIsOpen(!isOpen)}
@@ -107,7 +129,7 @@ const Navbar = () => {
           <button
             key={item.path}
             onClick={() => navigate(item.path)}
-            className="rounded-xl px-3 py-2 hover:bg-blue-600 transition"
+            className="rounded-xl px-3 py-2 hover:bg-blue-600 transition font-medium"
           >
             {item.label}
           </button>
@@ -115,7 +137,22 @@ const Navbar = () => {
       </div>
 
       <div className="hidden md:flex gap-4 mr-4 items-center">
+        <div className="p-1 dark:bg-gray-700 bg-gray-300 rounded-lg">
+          <button className="flex items-center" onClick={toggleMode}>
+            {modes.map((item) => (
+              <div
+                key={item.type}
+                className={`p-1 rounded-lg transition-all duration-200
+              ${mode === item.type ? "bg-white" : ""}`}
+              >
+                <img src={item.icon} alt={item.alt} className="w-5"/>
+              </div>
+            ))}
+          </button>
+        </div>
+
         <span className="font-semibold capitalize">{userName || "..."}</span>
+
         <button
           className="rounded-xl px-2 py-1 flex gap-2 items-center hover:bg-red-500"
           onClick={() => {
@@ -127,9 +164,8 @@ const Navbar = () => {
           Sign Out
         </button>
       </div>
-
       <div
-        className={`md:hidden absolute top-full left-0 w-full bg-gray-200 transition-all duration-300 overflow-hidden ${
+        className={`md:hidden absolute top-full left-0 w-full bg-gray-200 dark:bg-gray-900 transition-all duration-300 overflow-hidden ${
           isOpen ? "max-h-96 py-2" : "max-h-0"
         }`}
       >
