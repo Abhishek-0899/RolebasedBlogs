@@ -14,6 +14,7 @@ import EditorDashboard from "../pages/Editor/dashboard";
 import PostID from "../pages/PostIDs";
 import NewPosts from "../pages/Author/newPosts";
 import ManagePost from "../pages/Editor/managePost";
+import Profile from "../components/profile";
 
 const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <Home /> },
       { path: "posts/:id", element: <PostID /> },
+      { path: "profile", element: <Profile /> },
     ],
   },
 
