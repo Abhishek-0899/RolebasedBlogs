@@ -2,8 +2,8 @@ import Header from "../components/Header";
 import Post from "../components/Post";
 import { useEffect, useState } from "react";
 import supabase from "../utils/supabase";
-import Pagination from "../components/Pagination";
 import SearchBar from "../components/SeachInput";
+import Pagination from "../components/Pagination";
 
 const POSTS_PER_PAGE = 6;
 
