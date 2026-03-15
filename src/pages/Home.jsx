@@ -3,6 +3,7 @@ import Post from "../components/Post";
 import SearchBar from "../components/SeachInput";
 import { useEffect, useState } from "react";
 import supabase from "../utils/supabase";
+import Pagination from "../components/Pagination";
 
 const Home = () => {
   const [search, setSearch] = useState("");
@@ -11,9 +12,10 @@ const Home = () => {
   const fetchPublishedPosts = async () => {
     const { data, error } = await supabase
       .from("posts")
-      .select("*")
+      .select("*",)
       .eq("status", "published")
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: true });
+      console.log(data.count)
     if (error) {
       console.error(error);
       return;
@@ -30,7 +32,7 @@ const Home = () => {
 
         <SearchBar value={search} onChange={(e) => setSearch(e.target.value)} />
 
-        <div className="grid gap-4 mt-4">
+        <div className="grid grid-cols-3 gap-4 mt-4">
           {posts.length === 0 ? (
             <p className="text-center text-gray-400">No published post</p>
           ) : (
@@ -46,6 +48,7 @@ const Home = () => {
                   comments={post.comments}
                   likes={post.likes}
                   todayDate={new Date(post.created_at).toLocaleDateString()}
+                  userId={post.created_by}
                 />
               ))
           )}

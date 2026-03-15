@@ -66,6 +66,7 @@ const ManagePost = () => {
               likes={post.likes || 0}
               comments={post.comments || 0}
               title={post.title}
+              userId={post.created_by}
             />
           ))
         ) : (
