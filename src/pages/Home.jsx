@@ -3,7 +3,6 @@ import Post from "../components/Post";
 import SearchBar from "../components/SeachInput";
 import { useEffect, useState } from "react";
 import supabase from "../utils/supabase";
-import Pagination from "../components/Pagination";
 
 const Home = () => {
   const [search, setSearch] = useState("");
