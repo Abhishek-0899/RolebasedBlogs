@@ -3,7 +3,7 @@ import Post from "../components/Post";
 import { useEffect, useState } from "react";
 import supabase from "../utils/supabase";
 import SearchBar from "../components/SeachInput";
-import Pagination from "../components/Pagination";
+import Pagination from "../components/Pagination.jsx";
 
 const POSTS_PER_PAGE = 6;
 
