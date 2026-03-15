@@ -41,23 +41,15 @@ const Home = () => {
     <div className="min-h-screen bg-gray-100 flex justify-center px-4">
       <div className="w-full bg-white rounded-2xl shadow-md p-6">
         <Header />
-
-        <SearchBar
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <SearchBar value={search} onChange={(e) => setSearch(e.target.value)} />
 
         <div className="grid grid-cols-3 gap-4 mt-4">
           {posts.length === 0 ? (
-            <p className="text-center text-gray-400">
-              No published post
-            </p>
+            <p className="text-center text-gray-400">No published post</p>
           ) : (
             posts
               .filter((post) =>
-                post.title
-                  .toLowerCase()
-                  .includes(search.toLowerCase())
+                post.title.toLowerCase().includes(search.toLowerCase()),
               )
               .map((post) => (
                 <Post
@@ -66,9 +58,7 @@ const Home = () => {
                   title={post.title}
                   comments={post.comments}
                   likes={post.likes}
-                  todayDate={new Date(
-                    post.created_at
-                  ).toLocaleDateString()}
+                  todayDate={new Date(post.created_at).toLocaleDateString()}
                   userId={post.created_by}
                 />
               ))
