@@ -29,6 +29,7 @@ Data Management — Supabase as a backend with Row Level Security (RLS) and stru
 Scalable Architecture — Separation of concerns with reusable components and containerized logic for maintainable code.
 ---
 ![Schema](https://github.com/user-attachments/assets/6e8b06f5-359d-4fb9-9fd9-8d78459f82a3)
+![Schema]("C:\Users\abhis\OneDrive\Desktop\Supabase.png")
 
 ## 🧠 Overview
 
