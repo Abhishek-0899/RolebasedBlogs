@@ -51,11 +51,12 @@ const EditorDashboard = () => {
           {/* displayed data */}
           <div className=" mt-3 ">
             <div className="flex justify-between items-center mb-2">
-              <h2 className="text-2xl font-bold">All Posts</h2>
+              <h2 className="sm:text-2xl text-xl font-bold">All Posts</h2>
               <div className="flex gap-3">
                 <button
                   onClick={() => setFilter("pending")}
-                  className={`rounded-xl p-2 ${
+                  className={`sm:rounded-xl 
+                    rounded-lg p-2 ${
                     filter === "pending"
                       ? "bg-blue-500 text-white"
                       : "bg-gray-400 text-black"
@@ -65,7 +66,8 @@ const EditorDashboard = () => {
                 </button>
                 <button
                   onClick={() => setFilter("draft")}
-                  className={`rounded-xl p-2 ${
+                  className={`sm:rounded-xl 
+                    rounded-lg p-2 ${
                     filter !== "pending"
                       ? "bg-blue-500 text-white"
                       : "bg-gray-400 text-black"
@@ -82,13 +84,16 @@ const EditorDashboard = () => {
                 {editorPost.map((post) => (
                   <div
                     key={post.id}
-                    className={`w-full flex flex-col p-5 ${post.status === "published" ? "border-l-4 border-green-500" : "bg-gray-200"}`}
+                    className={`w-full flex flex-col p-4 sm:p-5 ${post.status === "published" ? "border-l-4 border-green-500" : "bg-gray-200"}`}
                   >
-                    <hr className="bg-white" />
+                    <hr className="bg-white p-2" />
 
-                    <div className="flex justify-between items-center">
-                      <div className="flex gap-3 items-center">
-                        <h3 className="text-xl font-semibold">{post.title}</h3>{" "}
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                      {" "}
+                      <div className="flex  flex-wrap gap-2 items-center max-w-full">
+                        <h3 className="text-lg sm:text-xl break-words max-w-full font-semibold">
+                          {post.title}
+                        </h3>{" "}
                         <span
                           className={`px-2 py-1 rounded-lg capitalize ${post.status === "pending" ? "bg-yellow-400" : post.status === "published" ? "bg-green-500" : "bg-gray-300"}`}
                         >
@@ -100,7 +105,7 @@ const EditorDashboard = () => {
                           </span>
                         )} */}
                       </div>
-                      <div className="flex justify-center items-center gap-2">
+                      <div className="flex flex-wrap justify-start sm:justify-center items-center gap-2">
                         {post.status === "pending" ? (
                           <>
                             <button
@@ -142,7 +147,7 @@ const EditorDashboard = () => {
                                 navigate(`/editor/new-posts/${post.id}`, {
                                   state: { post },
                                 })
-                              } 
+                              }
                             >
                               View
                             </button>

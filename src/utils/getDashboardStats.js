@@ -27,7 +27,7 @@ export const getDashboardStats = ({ role, data }) => {
         count: data.review,
         icon: HiOutlineClock,
       },
-      { title: "Published", count: data.published, icon: HiOutlineClock },
+      { title: "Published", count: data.published, icon: HiOutlineEye },
       { title: "Total Posts", count: data.totalPosts, icon: HiOutlineBookOpen },
     ];
   }

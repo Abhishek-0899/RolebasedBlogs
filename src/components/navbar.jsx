@@ -190,28 +190,26 @@ const Navbar = () => {
         </div>
 
         {/* User section */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate("/profile")}
-            className="font-semibold capitalize"
-          >
-            {userName ?? "User"}
-          </button>
+        <button
+          onClick={() => navigate("/profile")}
+          className=" flex items-center gap-3"
+        >
+          <span className="font-semibold capitalize">{userName ?? "User"}</span>
+        </button>
 
-          {/* Avatar */}
-          <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-400 flex items-center justify-center">
-            {avatar ? (
-              <img
-                src={avatar}
-                alt="avatar"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span className="text-sm font-semibold text-white">
-                {userName ? userName.charAt(0).toUpperCase() : "U"}
-              </span>
-            )}
-          </div>
+        {/* Avatar */}
+        <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-400 flex items-center justify-center">
+          {avatar ? (
+            <img
+              src={avatar}
+              alt="avatar"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span className="text-sm font-semibold text-white">
+              {userName ? userName.charAt(0).toUpperCase() : "U"}
+            </span>
+          )}
         </div>
 
         {/* Logout */}
@@ -246,9 +244,19 @@ const Navbar = () => {
           </button>
         ))}
 
+        <button
+          onClick={() => {
+            navigate("/profile");
+            setIsOpen(false);
+          }}
+          className="flex items-center gap-3 w-full px-4 py-2 hover:bg-blue-600"
+        >
+          <span className="capitalize">{userName ?? "User"}</span>
+        </button>
+        {/* 
         <div className="block w-full text-left text-sm px-4 py-2 capitalize">
           {userName ?? "User"}
-        </div>
+        </div> */}
 
         <button
           className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100"

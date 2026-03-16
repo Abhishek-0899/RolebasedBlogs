@@ -115,24 +115,29 @@ const Profile = () => {
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100 px-4">
       <button
-        className="flex items-center p-10 gap-1 cursor-pointer ml-32 text-xl text-blue-500"
+        className="flex items-center p-10 gap-1 cursor-pointer ml-0 sm:ml-32 text-lg sm:text-xl text-blue-500"
         onClick={() => navigate("/")}
       >
-        <BiLeftArrowAlt className="w-7" /> back
+        <BiLeftArrowAlt className="sm:w-7 w-4" /> back
       </button>
 
-      <div className="text-center text-4xl font-bold mb-3">Profile</div>
+      <div className="text-center text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
+        Profile
+      </div>
 
-      <div className="w-full flex items-center justify-center">
+      <div className="flex items-center justify-center">
         <form
           onSubmit={saveChanges}
-          className="w-full max-w-md bg-white shadow-2xl rounded-xl p-6 space-y-4"
+          className="w-full max-w-md bg-white shadow-2xl rounded-xl sm:p-6 p-5 space-y-4"
         >
           {/* Avatar */}
           <div className="flex flex-col items-center">
-            <div className="rounded-full flex items-center justify-center w-24 h-24 bg-gray-200 overflow-hidden">
+            <div
+              className="rounded-full flex items-center justify-center
+             w-20 h-20 sm:w-24 sm:h-24 bg-gray-200 overflow-hidden"
+            >
               {avatar ? (
                 <img
                   src={URL.createObjectURL(avatar)}
@@ -163,7 +168,7 @@ const Profile = () => {
 
           {/* Name */}
           <div className="flex flex-col gap-2">
-            <label>Name</label>
+            <label className="text-sm">Name</label>
 
             <input
               type="text"
