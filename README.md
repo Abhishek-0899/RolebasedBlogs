@@ -1,4 +1,5 @@
 # 📝 Blogify — Role-Based Blog Platform
+[![Live Demo](https://img.shields.io/badge/Live-Demo-green)](https://rolebased-blogs.vercel.app/)
 
 [![License](https://img.shields.io/github/license/yourusername/blogify)](LICENSE)
 [![Last Commit](https://img.shields.io/github/last-commit/yourusername/blogify)](https://github.com/yourusername/blogify)
