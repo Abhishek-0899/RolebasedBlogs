@@ -33,7 +33,8 @@ Scalable Architecture — Separation of concerns with reusable components and co
 
 The application uses a relational structure connecting users, posts, comments, and replies.
 
-![Database Schema](https://github.com/user-attachments/assets/8d5421b7-3445-4b63-a5fc-e36967aaac8e)
+---
+![Schema](https://github.com/user-attachments/assets/6e8b06f5-359d-4fb9-9fd9-8d78459f82a3)
 
 ## 🧠 Overview
 
