@@ -3,7 +3,8 @@ import Post from "../components/Post";
 import { useEffect, useState } from "react";
 import supabase from "../utils/supabase";
 import SearchBar from "../components/SeachInput";
-import Pagination from "../components/Pagination.jsx";
+import Pager from "../components/pager";
+import Filter from "../components/Filter";
 
 const POSTS_PER_PAGE = 6;
 
@@ -12,6 +13,8 @@ const Home = () => {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [postCount, setPostCount] = useState(0);
+
+  const [filter, setFilter] = useState("Latest");
 
   const fetchPublishedPosts = async () => {
     const from = (page - 1) * POSTS_PER_PAGE;
@@ -41,7 +44,19 @@ const Home = () => {
     <div className="min-h-screen bg-gray-100 flex justify-center px-4">
       <div className="w-full bg-white rounded-2xl shadow-md p-6">
         <Header />
-        <SearchBar value={search} onChange={(e) => setSearch(e.target.value)} />
+        <div className="flex justify-center">
+          <div className="flex w-3/4 max-w-4xl items-center gap-4">
+            <div className="w-3/4">
+              <SearchBar
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <div className="w-1/4 flex justify-end">
+              <Filter onfilterChange={(selected) => setFilter(selected)} />
+            </div>
+          </div>
+        </div>
 
         <div className="grid grid-cols-3 gap-4 mt-4">
           {posts.length === 0 ? (
@@ -51,6 +66,16 @@ const Home = () => {
               .filter((post) =>
                 post.title.toLowerCase().includes(search.toLowerCase()),
               )
+              .sort((a, b) => {
+                if (filter === "Latest") {
+                  return new Date(b.created_at) - new Date(a.created_at);
+                }
+                if (filter === "Oldest") {
+                  return new Date(a.created_at) - new Date(b.created_at);
+                } else if (filter === "A-Z") {
+                  return a.title.localeCompare(b.title);
+                }
+              })
               .map((post) => (
                 <Post
                   key={post.id}
@@ -65,7 +90,7 @@ const Home = () => {
           )}
         </div>
 
-        <Pagination
+        <Pager
           page={page}
           setPage={setPage}
           totalpage={Math.ceil(postCount / POSTS_PER_PAGE)}

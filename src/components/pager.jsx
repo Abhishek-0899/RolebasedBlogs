@@ -1,7 +1,9 @@
 import React from "react";
 
-const Pagination = ({ page, totalpage, setPage }) => {
+const Pager = ({ page, totalpage = 1, setPage }) => {
   if (totalpage <= 1) return null;
+
+  const totalPages = Math.max(1, totalpage); // always >=1
 
   return (
     <div className="flex justify-center items-center mt-6">
@@ -15,9 +17,8 @@ const Pagination = ({ page, totalpage, setPage }) => {
           Prev
         </button>
 
-        {[...Array(totalpage)].map((_, i) => {
+        {[...Array(totalPages)].map((_, i) => {
           const pageNumber = i + 1;
-
           return (
             <button
               key={pageNumber}
@@ -32,15 +33,15 @@ const Pagination = ({ page, totalpage, setPage }) => {
         })}
 
         <button
-          disabled={page === totalpage}
-          onClick={() => setPage((prev) => Math.min(prev + 1, totalpage))}
+          disabled={page === totalPages}
+          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
           className="rounded-lg border-2 px-3 py-1 disabled:opacity-40"
         >
           Next
         </button>
 
         <button
-          onClick={() => setPage(totalpage)}
+          onClick={() => setPage(totalPages)}
           className="rounded-lg border-2 px-3 py-1"
         >
           Last
@@ -51,4 +52,4 @@ const Pagination = ({ page, totalpage, setPage }) => {
   );
 };
 
-export default Pagination;
+export default Pager;

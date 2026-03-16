@@ -45,22 +45,30 @@ const Post = ({ todayDate, comments, title, id, likes, userId }) => {
           className="w-6 h-6 rounded-full object-cover"
         />
 
-        <p className="font-medium truncate">{title}</p>
+        <p className="font-bold text-2xl truncate">{title}</p>
       </div>
 
       <div className="flex justify-between items-center mt-auto pt-4">
         <div className="flex gap-4">
           <div className="flex items-center gap-1">
-            {likes === 0 ? <AiOutlineHeart /> : <span>{likes} ❤️</span>}
+            {likes === 0 ? (
+              <span className="text-xl">❤️ 0</span>
+            ) : (
+              <span className="text-xl">❤️ {likes} </span>
+            )}
           </div>
           <div className="flex items-center gap-1">
-            {comments === 0 ? <FaRegComment />  : <span>{comments} 💬</span>}
+            {comments === 0 ? (
+              <span className="text-xl">📰 0</span>
+            ) : (
+              <span className="text-xl"> 📰 {comments}</span>
+            )}
           </div>
         </div>
       </div>
 
       <p className="mt-2 text-sm text-gray-600">
-        🕒 <span className="text-black">{todayDate}</span>
+        <span className="text-black text-xl">⏱️{todayDate}</span>
       </p>
     </div>
   );
