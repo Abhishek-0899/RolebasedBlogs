@@ -29,6 +29,10 @@ Data Management — Supabase as a backend with Row Level Security (RLS) and stru
 Scalable Architecture — Separation of concerns with reusable components and containerized logic for maintainable code.
 ---
 ---
+## Database Schema
+
+The application uses a relational structure connecting users, posts, comments, and replies.
+
 ![Database Schema](https://github.com/user-attachments/assets/8d5421b7-3445-4b63-a5fc-e36967aaac8e)
 
 ## 🧠 Overview
