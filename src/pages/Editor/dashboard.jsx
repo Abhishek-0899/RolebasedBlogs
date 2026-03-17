@@ -170,7 +170,7 @@ const EditorDashboard = () => {
                     </div>
                   </div>
                   {/* CONTENT */}
-                  <p className="mt-2 text-gray-600 text-sm sm:text-base">
+                  <p className="mt-2 text-gray-600 text-sm sm:text-base break-words">
                     {post.excerpt}
                   </p>
 

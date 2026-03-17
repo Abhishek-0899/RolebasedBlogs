@@ -91,30 +91,25 @@ const PostID = () => {
 
   /* ================= COMMENT LIKE ================= */
 
-const handleCommentLike = async (comment) => {
+  const handleCommentLike = async (comment) => {
+    const newLikes = (comment.likes || 0) + 1;
 
-  const newLikes = (comment.likes || 0) + 1;
+    const { data, error } = await supabase
+      .from("comments")
+      .update({ likes: newLikes })
+      .eq("id", comment.id)
+      .select()
+      .single();
 
-  const { data, error } = await supabase
-    .from("comments")
-    .update({ likes: newLikes })
-    .eq("id", comment.id)
-    .select()
-    .single();
+    if (error) {
+      console.log("LIKE ERROR:", error);
+      return;
+    }
 
-  if (error) {
-    console.log("LIKE ERROR:", error);
-    return;
-  }
-
-  setComments((prev) =>
-    prev.map((c) =>
-      c.id === comment.id
-        ? { ...c, likes: data.likes }
-        : c
-    )
-  );
-};
+    setComments((prev) =>
+      prev.map((c) => (c.id === comment.id ? { ...c, likes: data.likes } : c)),
+    );
+  };
   /* ================= ADD COMMENT ================= */
 
   const handleComment = async () => {
@@ -211,7 +206,7 @@ const handleCommentLike = async (comment) => {
         Back to post page
       </button>
 
-      <div className="min-h-screen flex justify-center px-4 py-10">
+      <div className="min-h-screen flex justify-center px-3 sm:px-4 py-6 sm:py-10">
         <div className="w-full max-w-3xl space-y-6">
           {/* POST CARD */}
 
@@ -221,9 +216,9 @@ const handleCommentLike = async (comment) => {
                 {post.title}
               </h1>
 
-              <p className="text-gray-700 italic mb-4">{post.excerpt}</p>
+              <p className="text-gray-700 italic mb-4 break-words">{post.excerpt}</p>
 
-              <div className="text-gray-800 leading-relaxed whitespace-pre-line mb-4">
+              <div className="break-words text-gray-800 leading-relaxed whitespace-pre-line mb-4">
                 {post.content}
               </div>
 
