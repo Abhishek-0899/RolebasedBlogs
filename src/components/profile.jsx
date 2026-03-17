@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { BiLeftArrowAlt } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import supabase from "../utils/supabase";
+import { ToastContainer,toast } from "react-toastify";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -97,7 +98,7 @@ const Profile = () => {
         });
 
         if (signInError) {
-          alert("Current password incorrect");
+          toast.error("Current password incorrect");
           return;
         }
 
@@ -108,13 +109,15 @@ const Profile = () => {
         if (passError) throw passError;
       }
 
-      alert("Profile updated successfully 🎉");
+      toast.success("Profile updated successfully 🎉");
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
   return (
+    <>
+   <ToastContainer/>
     <div className="min-h-screen bg-gray-100 px-4">
       <button
         className="flex items-center p-10 gap-1 cursor-pointer ml-0 sm:ml-32 text-lg sm:text-xl text-blue-500"
@@ -221,6 +224,7 @@ const Profile = () => {
         </form>
       </div>
     </div>
+     </>
   );
 };
 

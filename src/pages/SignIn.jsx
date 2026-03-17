@@ -3,6 +3,7 @@ import img1 from "../assets/blog.png";
 import "../index.css";
 import { useNavigate } from "react-router-dom";
 import supabase from "../utils/supabase";
+import { ToastContainer, toast } from "react-toastify";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -41,7 +42,7 @@ const SignIn = () => {
     });
 
     if (authError) {
-      alert(authError.message);
+      toast.error(authError.message);
       setloading(false);
       return;
     }
@@ -50,7 +51,7 @@ const SignIn = () => {
     const session = data.session;
 
     if (!user || !session) {
-      alert("Signup failed or verify email first");
+      toast.error("Signup failed or verify email first");
       setloading(false);
       return;
     }
@@ -58,16 +59,16 @@ const SignIn = () => {
     const { error: profileError } = await supabase.from("profiles").insert({
       id: user.id,
       role: role.toLowerCase(),
-      name:name,
+      name: name,
       email: user.email,
     });
 
     if (profileError) {
-      alert("Profile failed: " + profileError.message);
+      toast.error("Profile failed: " + profileError.message);
       setloading(false);
       return;
     }
-
+    toast.success("Account created successfully 🎉");
     const roleRoute = {
       reader: "/",
       editor: "/editor/dashboard",
@@ -78,126 +79,131 @@ const SignIn = () => {
   };
 
   return (
-    <div className="w-full min-h-screen flex items-center justify-center bg-blue-200 px-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md md:max-w-xl lg:max-w-2xl p-8 md:p-12 text-center">
-        <img
-          src={img1}
-          alt="Blog logo"
-          className="mx-auto mb-6 w-28 sm:w-32 md:w-40 h-auto"
-        />
+    <>
+      <ToastContainer />
+      <div className="w-full min-h-screen flex items-center justify-center bg-blue-200 px-4">
+        <div className="bg-white rounded-2xl shadow-xl w-full max-w-md md:max-w-xl lg:max-w-2xl p-8 md:p-12 text-center">
+          <img
+            src={img1}
+            alt="Blog logo"
+            className="mx-auto mb-6 w-28 sm:w-32 md:w-40 h-auto"
+          />
 
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold">
-          Create Account
-        </h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold">
+            Create Account
+          </h1>
 
-        <p className="text-gray-500 text-sm sm:text-base mb-8">
-          Join our blog platform today
-        </p>
+          <p className="text-gray-500 text-sm sm:text-base mb-8">
+            Join our blog platform today
+          </p>
 
-        <form className="space-y-6" onSubmit={handleSignUp}>
-          <div className="text-left">
-            <label className="block text-gray-700 text-base md:text-lg font-medium mb-2">
-              Full Name
-            </label>
-            <input
-className="w-full px-5 py-3 md:py-4 text-base md:text-lg border border-gray-300 rounded-xl 
-               focus:outline-none focus:ring-2 focus:ring-blue-500 
-               transition duration-200"              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="John Doe"
-            />
-          </div>
-
-          <div className="text-left">
-            <label className="block text-gray-700 text-base md:text-lg font-medium mb-2">
-              Email
-            </label>
-            <input
-              className="w-full px-5 py-3 md:py-4 text-base md:text-lg border border-gray-300 rounded-xl 
+          <form className="space-y-6" onSubmit={handleSignUp}>
+            <div className="text-left">
+              <label className="block text-gray-700 text-base md:text-lg font-medium mb-2">
+                Full Name
+              </label>
+              <input
+                className="w-full px-5 py-3 md:py-4 text-base md:text-lg border border-gray-300 rounded-xl 
                focus:outline-none focus:ring-2 focus:ring-blue-500 
                transition duration-200"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="xyz@gmail.com"
-            />
-          </div>
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="John Doe"
+              />
+            </div>
 
-          <div className="text-left">
-            <label className="block text-gray-700 text-base md:text-lg font-medium mb-2">
-              Password
-            </label>
-            <input
-className="w-full px-5 py-3 md:py-4 text-base md:text-lg border border-gray-300 rounded-xl 
+            <div className="text-left">
+              <label className="block text-gray-700 text-base md:text-lg font-medium mb-2">
+                Email
+              </label>
+              <input
+                className="w-full px-5 py-3 md:py-4 text-base md:text-lg border border-gray-300 rounded-xl 
                focus:outline-none focus:ring-2 focus:ring-blue-500 
-               transition duration-200"              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-            />
-          </div>
+               transition duration-200"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="xyz@gmail.com"
+              />
+            </div>
 
-          {/* Role dropdown */}
-          <div className="relative text-left" ref={dropdownRef}>
-            <label className="block text-gray-600 text-sm sm:text-base mb-1">
-              Select Role
-            </label>
+            <div className="text-left">
+              <label className="block text-gray-700 text-base md:text-lg font-medium mb-2">
+                Password
+              </label>
+              <input
+                className="w-full px-5 py-3 md:py-4 text-base md:text-lg border border-gray-300 rounded-xl 
+               focus:outline-none focus:ring-2 focus:ring-blue-500 
+               transition duration-200"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+              />
+            </div>
 
-            <button
-              type="button"
-              onClick={() => setOpen(!open)}
-              className="w-full px-4 py-2 sm:py-3 border border-gray-300 rounded-lg bg-white text-left"
-            >
-              <div className="flex justify-between items-center">
-                <span className="capitalize">{role}</span>
-                <span
-                  className={`transition-transform ${open ? "rotate-180" : ""}`}
-                >
-                  ▼
-                </span>
-              </div>
-            </button>
+            {/* Role dropdown */}
+            <div className="relative text-left" ref={dropdownRef}>
+              <label className="block text-gray-600 text-sm sm:text-base mb-1">
+                Select Role
+              </label>
 
-            {open && (
-              <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg">
-                {roles.map((item) => (
-                  <div
-                    key={item}
-                    onClick={() => {
-                      setRole(item);
-                      setOpen(false);
-                    }}
-                    className="px-4 py-2 hover:bg-blue-100 cursor-pointer capitalize"
+              <button
+                type="button"
+                onClick={() => setOpen(!open)}
+                className="w-full px-4 py-2 sm:py-3 border border-gray-300 rounded-lg bg-white text-left"
+              >
+                <div className="flex justify-between items-center">
+                  <span className="capitalize">{role}</span>
+                  <span
+                    className={`transition-transform ${open ? "rotate-180" : ""}`}
                   >
-                    {item}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                    ▼
+                  </span>
+                </div>
+              </button>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-blue-600 w-full text-white py-2 sm:py-3 rounded-lg font-medium hover:bg-blue-700 transition hover:scale-105 active:scale-95 duration-200"
-          >
-            {loading ? "Creating Account..." : "Create Account"}
-          </button>
+              {open && (
+                <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+                  {roles.map((item) => (
+                    <div
+                      key={item}
+                      onClick={() => {
+                        setRole(item);
+                        setOpen(false);
+                      }}
+                      className="px-4 py-2 hover:bg-blue-100 cursor-pointer capitalize"
+                    >
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
-          <p className="text-sm sm:text-base">
-            Already have an account?{" "}
             <button
-              type="button"
-              onClick={() => navigate("/login")}
-              className="text-blue-500 hover:underline transition"
+              type="submit"
+              disabled={loading}
+              className="bg-blue-600 w-full text-white py-2 sm:py-3 rounded-lg font-medium hover:bg-blue-700 transition hover:scale-105 active:scale-95 duration-200"
             >
-              Login
+              {loading ? "Creating Account..." : "Create Account"}
             </button>
-          </p>
-        </form>
+
+            <p className="text-sm sm:text-base">
+              Already have an account?{" "}
+              <button
+                type="button"
+                onClick={() => navigate("/login")}
+                className="text-blue-500 hover:underline transition"
+              >
+                Login
+              </button>
+            </p>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

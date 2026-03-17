@@ -14,7 +14,6 @@ import { useState, useEffect } from "react";
 const EditorDashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const dateTime = new Date().toLocaleDateString("en-US");
 
   // ✅ Fetch posts from Supabase on mount
   useEffect(() => {
@@ -36,132 +35,153 @@ const EditorDashboard = () => {
 
   const postPublished = (id) => {
     dispatch(publishPost(id));
-    setFilter("draft");
+    // setFilter("draft");
   };
 
   return (
-    <div className="">
+    <div className="min-h-screen bg-gray-50">
       {/* <Navbar /> */}
-      <div className="flex justify-center items-center ">
-        <div className="w-full max-w-6xl p-10 mt-10">
-          <h1 className="text-4xl font-extrabold">Editor Dashboard</h1>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-6">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800">
+            Editor Dashboard
+          </h1>
           <p className="text-gray-500 mt-2">Review and manage all blog posts</p>
+        </div>
 
-          <Statsgrid stats={stats} />
-          {/* displayed data */}
-          <div className=" mt-3 ">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="sm:text-2xl text-xl font-bold">All Posts</h2>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setFilter("pending")}
-                  className={`sm:rounded-xl 
-                    rounded-lg p-2 ${
-                    filter === "pending"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-400 text-black"
-                  }`}
-                >
-                  Pending Only
-                </button>
-                <button
-                  onClick={() => setFilter("draft")}
-                  className={`sm:rounded-xl 
-                    rounded-lg p-2 ${
-                    filter !== "pending"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-400 text-black"
-                  }`}
-                >
-                  All Posts
-                </button>
-              </div>
-            </div>
-            {editorPost.length === 0 ? (
-              <p className="text-gray-500">No posts yet.</p>
-            ) : (
-              <>
-                {editorPost.map((post) => (
-                  <div
-                    key={post.id}
-                    className={`w-full flex flex-col p-4 sm:p-5 ${post.status === "published" ? "border-l-4 border-green-500" : "bg-gray-200"}`}
-                  >
-                    <hr className="bg-white p-2" />
+        {/* {Stats} */}
+        <Statsgrid stats={stats} />
 
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-                      {" "}
-                      <div className="flex  flex-wrap gap-2 items-center max-w-full">
-                        <h3 className="text-lg sm:text-xl break-words max-w-full font-semibold">
-                          {post.title}
-                        </h3>{" "}
-                        <span
-                          className={`px-2 py-1 rounded-lg capitalize ${post.status === "pending" ? "bg-yellow-400" : post.status === "published" ? "bg-green-500" : "bg-gray-300"}`}
-                        >
-                          {post.status}
-                        </span>
-                        {/* {post.status === "published" && (
-                          <span className="text-xs text-green-700 font-semibold">
-                            (Read-only)
-                          </span>
-                        )} */}
-                      </div>
-                      <div className="flex flex-wrap justify-start sm:justify-center items-center gap-2">
-                        {post.status === "pending" ? (
-                          <>
-                            <button
-                              className="text-blue-500 font-semibold hover:text-blue-700 p-1 rounded-lg text-center"
-                              onClick={() =>
-                                navigate(`/editor/new-posts/${post.id}`, {
-                                  state: { post },
-                                })
-                              }
-                            >
-                              View
-                            </button>
-                            <button
-                              onClick={() => postPublished(post.id)}
-                              className="hover:bg-gray-300 p-1 rounded-lg"
-                            >
-                              <img
-                                className="w-5 h-5"
-                                src={acceptImage}
-                                alt="Logo"
-                              />
-                            </button>
-                            <button
-                              onClick={() => dispatch(deletePost(post.id))}
-                              className="hover:bg-gray-300 p-1 rounded-lg"
-                            >
-                              <img
-                                className="w-7 h-7"
-                                src={declineImage}
-                                alt="Logo"
-                              />
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              className="text-blue-500 font-semibold hover:text-blue-700 p-1 rounded-lg text-center"
-                              onClick={() =>
-                                navigate(`/editor/new-posts/${post.id}`, {
-                                  state: { post },
-                                })
-                              }
-                            >
-                              View
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                    <p className="mt-1">{post.excerpt}</p>
-                    <p className="mt-3">{dateTime}</p>
-                  </div>
-                ))}
-              </>
-            )}
+        {/* FILTER + TITLE */}
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mt-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
+            All Posts
+          </h2>
+          {/* FILTER Tab */}
+          {/* <div className=" mt-3 "> */}
+          <div className="flex bg-gray-200 rounded-xl p-1 w-fit">
+            <button
+              onClick={() => setFilter("pending")}
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
+                filter === "pending"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-600"
+              }`}
+            >
+              Pending
+            </button>
+            <button
+              onClick={() => setFilter("draft")}
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
+                filter !== "pending"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-600"
+              }`}
+            >
+              All Posts
+            </button>
           </div>
+        </div>
+
+        {/* POSTS */}
+        <div className="mt-4 space-y-4">
+          {editorPost.length === 0 ? (
+            <p className="text-center py-10 text-gray-500">No posts found 💤</p>
+          ) : (
+            <>
+              {editorPost.map((post) => (
+                <div
+                  key={post.id}
+                  className={`bg-white rounded-xl shadow-sm hover:shadow-md transition p-4 sm:p-5 border
+                    ${post.status === "published" ? "border-l-4 border-green-500" : "bg-gray-200"}`}
+                >
+                  {/* TOP ROW */}
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                    {/* TITLE + STATUS */}
+                    <div className="flex flex-wrap gap-2 items-center">
+                      <h3 className="text-lg sm:text-xl break-words font-semibold">
+                        {post.title}
+                      </h3>
+
+                      <span
+                        className={`text-sm px-2 py-1 rounded-full capitalize font-medium 
+                          ${
+                            post.status === "pending"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : post.status === "published"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-gray-200 text-gray-700"
+                          }`}
+                      >
+                        {post.status}
+                      </span>
+                    </div>
+
+                    {/* ACTIONS */}
+
+                    <div className="flex flex-wrap gap-3 mt-2 mb-2">
+                      {/* {post.status === "pending" ? (
+                        <> */}
+
+                      <button
+                        className="px-3 py-1 text-sm rounded-lg bg-blue-50
+                        text-blue-500 hover:bg-blue-100 transition"
+                        onClick={() =>
+                          navigate(`/editor/new-posts/${post.id}`, {
+                            state: { post },
+                          })
+                        }
+                      >
+                        View
+                      </button>
+                      {post.status === "pending" && (
+                        <>
+                          <button
+                            onClick={() => postPublished(post.id)}
+                            className="flex items-center gap-1 px-3 py-1
+                            text-sm rounded-lg bg-green-50 text-green-600
+                            hover:bg-green-50 transition"
+                          >
+                            <img
+                              className="w-5 h-5"
+                              src={acceptImage}
+                              alt="Logo"
+                            />
+                            Approve
+                          </button>
+
+                          <button
+                            onClick={() => dispatch(deletePost(post.id))}
+                            className="flex items-center gap-1 px-3 py-1
+                            text-sm rounded-lg bg-red-50 text-red-600
+                            hover:bg-reg-50 transition
+                             "
+                          >
+                            <img
+                              className="w-4 h-4"
+                              src={declineImage}
+                              alt="Logo"
+                            />
+                            Reject
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  {/* CONTENT */}
+                  <p className="mt-2 text-gray-600 text-sm sm:text-base">
+                    {post.excerpt}
+                  </p>
+
+                  {/* DATE */}
+                  <p className="mt-3 text-xs text-gray-400">
+                    {new Date(post.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       </div>
     </div>
