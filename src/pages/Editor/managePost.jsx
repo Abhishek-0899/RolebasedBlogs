@@ -11,7 +11,6 @@ const ManagePost = () => {
   const [posts, setPost] = useState([]);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const todayDate = new Date().toLocaleDateString("en-US");
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [postCount, setPostCount] = useState(0);
@@ -19,38 +18,50 @@ const ManagePost = () => {
   const [filter, setFilter] = useState("Latest");
   //  fetchData Once
 
+  const fetchPosts = async () => {
+    const from = (page - 1) * POSTS_PER_PAGE;
+    const to = from + POSTS_PER_PAGE - 1;
+
+    setLoading(true);
+    let query = supabase.from("posts").select("*", { count: "exact" });
+
+    if (filter === "Latest") {
+      query = query.order("created_at", { ascending: false });
+    }
+    if (filter === "Oldest") {
+      query = query.order("created_at", { ascending: true });
+    }
+    if (filter === "A-Z") {
+      query = query.order("title", { ascending: true });
+    }
+
+    const { data, error, count } = await query.range(from, to);
+
+    if (data && !error) {
+      const uniquePostMap = new Map();
+      data.forEach((post) => {
+        if (!uniquePostMap.has(post.id)) {
+          uniquePostMap.set(post.id, post);
+        }
+      });
+      setPost(Array.from(uniquePostMap.values()));
+      setPostCount(count);
+    }
+    setLoading(false);
+  };
   useEffect(() => {
-    const fetchPosts = async () => {
-      const from = (page - 1) * POSTS_PER_PAGE;
-      const to = from + POSTS_PER_PAGE - 1;
-
-      setLoading(true);
-      const { data, error, count } = await supabase
-        .from("posts")
-        .select("*", { count: "exact" })
-        .order("created_at", { ascending: false })
-        .range(from, to);
-
-      if (data && !error) {
-        const uniquePostMap = new Map();
-        data.forEach((post) => {
-          if (!uniquePostMap.has(post.id)) {
-            uniquePostMap.set(post.id, post);
-          }
-        });
-        setPost(Array.from(uniquePostMap.values()));
-        setPostCount(count);
-      }
-      setLoading(false);
-    };
     fetchPosts();
-  }, [page]);
+  }, [page, filter]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [filter]);
 
   // Debounce search input
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search);
-    }, 2000);
+    }, 500);
     return () => clearTimeout(handler);
   }, [search]);
 
@@ -98,11 +109,14 @@ const ManagePost = () => {
               <Post
                 key={post}
                 id={post.id}
-                todayDate={new Date(post.created_at).toLocaleDateString("en-GB",{
-                  day:"numeric",
-                  month:"long",
-                  year:"numeric"
-                }) }
+                todayDate={new Date(post.created_at).toLocaleDateString(
+                  "en-GB",
+                  {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  },
+                )}
                 likes={post.likes || 0}
                 comments={post.comments || 0}
                 title={post.title}
@@ -110,14 +124,19 @@ const ManagePost = () => {
               />
             ))
         ) : (
-          <p className="text-gray-500 mt-4 col-span-full"> No post</p>
+          <p className="text-gray-500 mt-4 col-span-full text-center font-bold text-xl">
+            {" "}
+            No post
+          </p>
         )}
       </div>
-      <Pager
-        page={page}
-        setPage={setPage}
-        totalpage={Math.ceil(postCount / POSTS_PER_PAGE)}
-      />{" "}
+      {filteredPosts.length > 0 && (
+        <Pager
+          page={page}
+          setPage={setPage}
+          totalpage={Math.ceil(postCount / POSTS_PER_PAGE)}
+        />
+      )}
     </div>
   );
 };
