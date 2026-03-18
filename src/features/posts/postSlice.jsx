@@ -30,17 +30,17 @@ export const savedPost = createAsyncThunk(
     try {
       let query;
 
-      if (post.id) {
+      if (post?.id) {
         // UPDATE
         query = supabase
           .from("posts")
           .update({
-            title: post.title,
-            content: post.content,
-            excerpt: post.excerpt,
-            status: post.status,
+            title: post?.title,
+            content: post?.content,
+            excerpt: post?.excerpt,
+            status: post?.status,
           })
-          .eq("id", post.id)
+          .eq("id", post?.id)
           .select()
           .single();
       } else {
@@ -48,11 +48,11 @@ export const savedPost = createAsyncThunk(
         query = supabase
           .from("posts")
           .insert({
-            title: post.title,
-            content: post.content,
-            excerpt: post.excerpt,
-            status: post.status,
-            created_by: post.created_by,
+            title: post?.title,
+            content: post?.content,
+            excerpt: post?.excerpt,
+            status: post?.status,
+            created_by: post?.created_by,
           })
           .select()
           .single();
@@ -133,7 +133,7 @@ const PostSlice = createSlice({
     builder.addCase(savedPost.fulfilled, (state, action) => {
       const post = action.payload;
 
-      const index = state.posts.findIndex((p) => p.id === post.id);
+      const index = state.posts.findIndex((p) => p.id === post?.id);
 
       if (index !== -1) {
         state.posts[index] = post;

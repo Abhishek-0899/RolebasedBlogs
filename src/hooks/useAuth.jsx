@@ -15,11 +15,11 @@ export const useAuth = () => {
         const { data: profile } = await supabase
           .from("profiles")
           .select("role")
-          .eq("id", session.user.id)
+          .eq("id", session?.user?.id)
           .single();
 
         setUser({
-          ...session.user,
+          ...session?.user,
           role: profile?.role || "reader",
         });
       } else {
@@ -38,11 +38,11 @@ export const useAuth = () => {
         const { data: profile } = await supabase
           .from("profiles")
           .select("role")
-          .eq("id", session.user.id)
+          .eq("id", session?.user?.id)
           .single();
 
         setUser({
-          ...session.user,
+          ...session?.user,
           role: profile?.role || "reader",
         });
       } else {

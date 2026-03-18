@@ -57,10 +57,10 @@ const SignIn = () => {
     }
 
     const { error: profileError } = await supabase.from("profiles").insert({
-      id: user.id,
-      role: role.toLowerCase(),
+      id: user?.id,
+      role: role?.toLowerCase(),
       name: name,
-      email: user.email,
+      email: user?.email,
     });
 
     if (profileError) {

@@ -27,7 +27,7 @@ const EditorDashboard = () => {
   const [filter, setFilter] = useState("pending");
   const editorPost =
     filter === "pending"
-      ? posts.filter((post) => post.status === "pending")
+      ? posts.filter((post) => post?.status === "pending")
       : posts;
 
   /* ===== STATS ===== */
@@ -92,53 +92,53 @@ const EditorDashboard = () => {
             <>
               {editorPost.map((post) => (
                 <div
-                  key={post.id}
+                  key={post?.id}
                   className={`bg-white rounded-xl shadow-sm hover:shadow-md transition p-4 sm:p-5 border
-                    ${post.status === "published" ? "border-l-4 border-green-500" : "bg-gray-200"}`}
+                    ${post?.status === "published" ? "border-l-4 border-green-500" : "bg-gray-200"}`}
                 >
                   {/* TOP ROW */}
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                     {/* TITLE + STATUS */}
                     <div className="flex flex-wrap gap-2 items-center">
                       <h3 className="text-lg sm:text-xl break-words font-semibold">
-                        {post.title}
+                        {post?.title}
                       </h3>
 
                       <span
                         className={`text-sm px-2 py-1 rounded-full capitalize font-medium 
                           ${
-                            post.status === "pending"
+                            post?.status === "pending"
                               ? "bg-yellow-100 text-yellow-700"
-                              : post.status === "published"
+                              : post?.status === "published"
                                 ? "bg-green-100 text-green-700"
                                 : "bg-gray-200 text-gray-700"
                           }`}
                       >
-                        {post.status}
+                        {post?.status}
                       </span>
                     </div>
 
                     {/* ACTIONS */}
 
                     <div className="flex flex-wrap gap-3 mt-2 mb-2">
-                      {/* {post.status === "pending" ? (
+                      {/* {post?.status === "pending" ? (
                         <> */}
 
                       <button
                         className="px-3 py-1 text-sm rounded-lg bg-blue-50
                         text-blue-500 hover:bg-blue-100 transition"
                         onClick={() =>
-                          navigate(`/editor/new-posts/${post.id}`, {
+                          navigate(`/editor/new-posts/${post?.id}`, {
                             state: { post },
                           })
                         }
                       >
                         View
                       </button>
-                      {post.status === "pending" && (
+                      {post?.status === "pending" && (
                         <>
                           <button
-                            onClick={() => postPublished(post.id)}
+                            onClick={() => postPublished(post?.id)}
                             className="flex items-center gap-1 px-3 py-1
                             text-sm rounded-lg bg-green-50 text-green-600
                             hover:bg-green-50 transition"
@@ -152,7 +152,7 @@ const EditorDashboard = () => {
                           </button>
 
                           <button
-                            onClick={() => dispatch(deletePost(post.id))}
+                            onClick={() => dispatch(deletePost(post?.id))}
                             className="flex items-center gap-1 px-3 py-1
                             text-sm rounded-lg bg-red-50 text-red-600
                             hover:bg-reg-50 transition
@@ -171,12 +171,12 @@ const EditorDashboard = () => {
                   </div>
                   {/* CONTENT */}
                   <p className="mt-2 text-gray-600 text-sm sm:text-base break-words">
-                    {post.excerpt}
+                    {post?.excerpt}
                   </p>
 
                   {/* DATE */}
                   <p className="mt-3 text-xs text-gray-400">
-                    {new Date(post.created_at).toLocaleDateString()}
+                    {new Date(post?.created_at).toLocaleDateString()}
                   </p>
                 </div>
               ))}

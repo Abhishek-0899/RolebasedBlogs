@@ -56,7 +56,7 @@ const Home = () => {
 
   // ✅ ONLY filter here (no sorting)
   const filteredPosts = posts.filter((post) =>
-    post.title.toLowerCase().includes(search.toLowerCase())
+    post?.title?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -89,12 +89,12 @@ const Home = () => {
           ) : (
             filteredPosts.map((post) => (
               <Post
-                key={post.id}
-                id={post.id}
-                title={post.title}
-                comments={post.comments}
-                likes={post.likes}
-                todayDate={new Date(post.created_at).toLocaleDateString(
+                key={post?.id}
+                id={post?.id}
+                title={post?.title}
+                comments={post?.comments}
+                likes={post?.likes}
+                todayDate={new Date(post?.created_at).toLocaleDateString(
                   "en-GB",
                   {
                     day: "numeric",
@@ -102,7 +102,7 @@ const Home = () => {
                     year: "numeric",
                   }
                 )}
-                userId={post.created_by}
+                userId={post?.created_by}
               />
             ))
           )}

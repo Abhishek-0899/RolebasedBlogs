@@ -40,8 +40,8 @@ const ManagePost = () => {
     if (data && !error) {
       const uniquePostMap = new Map();
       data.forEach((post) => {
-        if (!uniquePostMap.has(post.id)) {
-          uniquePostMap.set(post.id, post);
+        if (!uniquePostMap.has(post?.id)) {
+          uniquePostMap.set(post?.id, post);
         }
       });
       setPost(Array.from(uniquePostMap.values()));
@@ -72,7 +72,7 @@ const ManagePost = () => {
 
   // Filter posts based on search input
   const filteredPosts = posts.filter((post) =>
-    post.title.toLowerCase().includes(debouncedSearch.toLowerCase()),
+    post?.title.toLowerCase().includes(debouncedSearch.toLowerCase()),
   );
 
   return (
@@ -108,8 +108,8 @@ const ManagePost = () => {
             .map((post) => (
               <Post
                 key={post}
-                id={post.id}
-                todayDate={new Date(post.created_at).toLocaleDateString(
+                id={post?.id}
+                todayDate={new Date(post?.created_at).toLocaleDateString(
                   "en-GB",
                   {
                     day: "numeric",
@@ -117,10 +117,10 @@ const ManagePost = () => {
                     year: "numeric",
                   },
                 )}
-                likes={post.likes || 0}
-                comments={post.comments || 0}
-                title={post.title}
-                userId={post.created_by}
+                likes={post?.likes || 0}
+                comments={post?.comments || 0}
+                title={post?.title}
+                userId={post?.created_by}
               />
             ))
         ) : (

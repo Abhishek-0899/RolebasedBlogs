@@ -64,7 +64,7 @@ const Navbar = () => {
       .from("profiles")
       // .select("name, avatar_url")
       .select("*")
-      .eq("id", (await supabase.auth.getUser()).data.user.id)
+      .eq("id", (await supabase.auth.getUser()).data?.user?.id)
       .maybeSingle();
     // console.log(data);
     setUserName(data?.name || null);
@@ -85,7 +85,7 @@ const Navbar = () => {
       setUserId(user?.id || null);
 
       if (user?.id) {
-        await fetchProfile(user.id);
+        await fetchProfile(user?.id);
       }
 
       setLoadingSession(false);
@@ -100,7 +100,7 @@ const Navbar = () => {
         setUserId(user?.id || null);
 
         if (user?.id) {
-          await fetchProfile(user.id);
+          await fetchProfile(user?.id);
         }
       },
     );

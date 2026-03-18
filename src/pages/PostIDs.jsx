@@ -213,13 +213,13 @@ const PostID = () => {
           <div className="p-6 bg-yellow-200 rounded-xl shadow">
             <div className="bg-yellow-200 rounded-xl shadow p-6 mb-4">
               <h1 className="text-3xl font-bold mb-2 break-words">
-                {post.title}
+                {post?.title}
               </h1>
 
-              <p className="text-gray-700 italic mb-4 break-words">{post.excerpt}</p>
+              <p className="text-gray-700 italic mb-4 break-words">{post?.excerpt}</p>
 
               <div className="break-words text-gray-800 leading-relaxed whitespace-pre-line mb-4">
-                {post.content}
+                {post?.content}
               </div>
 
               <div className="flex items-center gap-2 text-sm text-gray-700">

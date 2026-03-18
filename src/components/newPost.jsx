@@ -100,7 +100,7 @@ const NewPost = () => {
         .from("posts")
         .insert({
           ...payload,
-          created_by: user.id,
+          created_by: user?.id,
         })
         .select()
         .single();
@@ -146,7 +146,7 @@ const NewPost = () => {
         .from("posts")
         .insert({
           ...payload,
-          created_by: user.id,
+          created_by: user?.id,
         })
         .select()
         .single();

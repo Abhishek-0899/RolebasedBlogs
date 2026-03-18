@@ -21,7 +21,7 @@ const RequireRole = ({ role: requiredRole, children }) => {
       const { data } = await supabase
         .from("profiles")
         .select("role")
-        .eq("id", user.id)
+        .eq("id", user?.id)
         .single();
 
       setUserRole(data?.role || null);

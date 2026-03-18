@@ -25,9 +25,9 @@ const Post = ({ todayDate, comments, title, id, likes, userId }) => {
   }, [userId]);
 
   const handleOpenPost = () => {
-    if (user.role === "author") {
+    if (user?.role === "author") {
       navigate(`/author/posts/${id}`);
-    } else if (user.role === "editor") {
+    } else if (user?.role === "editor") {
       navigate(`/editor/posts/${id}`);
     } else {
       navigate(`/posts/${id}`);

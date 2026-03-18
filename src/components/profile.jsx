@@ -24,13 +24,13 @@ const Profile = () => {
 
       if (!user) return;
 
-      setUserId(user.id);
-      setEmail(user.email || "");
+      setUserId(user?.id);
+      setEmail(user?.email || "");
 
       const { data: profile } = await supabase
         .from("profiles")
         .select("name, avatar_url")
-        .eq("id", user.id)
+        .eq("id", user?.id)
         .single();
 
       setName(profile?.name || "");
@@ -53,7 +53,7 @@ const Profile = () => {
 
       // upload avatar
       if (avatar) {
-        const filePath = `${user.id}-${Date.now()}`;
+        const filePath = `${user?.id}-${Date.now()}`;
         const { data: buckets } = await supabase.storage.listBuckets();
         console.log(buckets);
         const { error: uploadError } = await supabase.storage
@@ -81,7 +81,7 @@ const Profile = () => {
         const { error } = await supabase
           .from("profiles")
           .update(updates)
-          .eq("id", user.id);
+          .eq("id", user?.id);
 
         if (error) throw error;
 
